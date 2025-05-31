@@ -21,6 +21,8 @@ https://docs.google.com/document/d/12ekOJDRgaJYC8UHY4T497ujeJD41Lu4_uw8VIKepERA/
 
 시퀀스 다이어그램
 https://drive.google.com/file/d/1bgIlq1rGZKQ4hM_U2zRmxL7lxDk7bzmB/view?usp=sharing
+![항해99-시퀀스다이어그램 drawio](https://github.com/user-attachments/assets/1672d870-8e9c-470b-b58a-6762fe4b7421)
+
 
 
 클래스 다이어그램
@@ -28,3 +30,5 @@ https://drive.google.com/file/d/1bgIlq1rGZKQ4hM_U2zRmxL7lxDk7bzmB/view?usp=shari
 
 인프라 구성도
 https://drive.google.com/file/d/1B7np0fDjOJaL4mL3dwu5cTRHUCSlBklC/view?usp=sharing
+![image](https://github.com/user-attachments/assets/78675910-fbc3-4e07-9dd2-dca9b35bbd58)
+
