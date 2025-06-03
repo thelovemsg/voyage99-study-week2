@@ -3,7 +3,7 @@ package kr.hhplus.be.server.concert.domain;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.common.jpa.BaseEntity;
-import kr.hhplus.be.server.concert.enums.ConcertStatus;
+import kr.hhplus.be.server.concert.enums.CommonStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,7 +38,7 @@ public class ConcertEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ConcertStatus status = ConcertStatus.STOPPED;
+    private CommonStatusEnum status = CommonStatusEnum.STOPPED;
 
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -50,11 +50,11 @@ public class ConcertEntity extends BaseEntity {
         if(ObjectUtils.isEmpty(startDate) || ObjectUtils.isEmpty(endDate))
             return false;
 
-        return this.status != ConcertStatus.STOPPED && this.status != ConcertStatus.READY;
+        return this.status != CommonStatusEnum.STOPPED && this.status != CommonStatusEnum.READY;
     }
 
     public void openConcert() {
-        this.status = ConcertStatus.ON_SELLING;
+        this.status = CommonStatusEnum.ON_SELLING;
     }
 
     public void updateInfo(String concertName, String description, String artistName) {

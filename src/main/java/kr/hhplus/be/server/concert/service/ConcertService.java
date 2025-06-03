@@ -3,8 +3,10 @@ package kr.hhplus.be.server.concert.service;
 import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.messages.MessageCode;
+import kr.hhplus.be.server.concert.controller.dto.ConcertCreateDto;
+import kr.hhplus.be.server.concert.controller.dto.ConcertInfoDto;
 import kr.hhplus.be.server.concert.domain.ConcertEntity;
-import kr.hhplus.be.server.concert.dto.ConcertUpdateDto;
+import kr.hhplus.be.server.concert.controller.dto.ConcertUpdateDto;
 import kr.hhplus.be.server.concert.repository.ConcertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,16 @@ public class ConcertService {
 
     private final ConcertRepository repository;
 
-    public ConcertEntity findById(Long concertId) {
-        return repository.findById(concertId).orElseThrow(() -> new NotFoundException(MessageCode.CONCERT_NOT_FOUND, concertId));
+    public ConcertInfoDto.Response findById(Long concertId) {
+        ConcertEntity concertEntity = repository.findById(concertId).orElseThrow(() -> new NotFoundException(MessageCode.CONCERT_NOT_FOUND, concertId));
+        return ConcertInfoDto.Response.fromEntity(concertEntity);
     }
 
     @Transactional
-    public ConcertEntity createConcert(ConcertEntity newConcert) {
-        return repository.save(newConcert);
+    public ConcertCreateDto.Response createConcert(ConcertCreateDto.Request request) {
+        ConcertEntity newConcertEntity = ConcertCreateDto.Request.toEntity(request);
+        ConcertEntity savedEntity = repository.save(newConcertEntity);
+        return ConcertCreateDto.Response.fromEntity(savedEntity);
     }
 
     @Transactional

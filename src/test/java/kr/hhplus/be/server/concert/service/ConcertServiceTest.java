@@ -2,8 +2,10 @@ package kr.hhplus.be.server.concert.service;
 
 import io.hypersistence.tsid.TSID;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
+import kr.hhplus.be.server.concert.controller.dto.ConcertCreateDto;
+import kr.hhplus.be.server.concert.controller.dto.ConcertInfoDto;
 import kr.hhplus.be.server.concert.domain.ConcertEntity;
-import kr.hhplus.be.server.concert.dto.ConcertUpdateDto;
+import kr.hhplus.be.server.concert.controller.dto.ConcertUpdateDto;
 import kr.hhplus.be.server.concert.repository.ConcertRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class ConcertServiceTest {
@@ -32,11 +36,12 @@ public class ConcertServiceTest {
     @DisplayName("콘서트를 입력받고 생성한다")
     public void 콘서트_생성() {
         //given
-        ConcertEntity newConcert = ConcertEntity.builder()
-                .concertName("name")
-                .description("description")
-                .artistName("tester")
-                .build();
+        Long id = TSID.fast().toLong();
+
+        ConcertCreateDto.Request request = new ConcertCreateDto.Request();
+        request.setConcertName("name");
+        request.setDescription("description");
+        request.setArtistName("tester");
 
         ConcertEntity expectedConcert = ConcertEntity.builder()
                 .concertName("name")
@@ -44,17 +49,16 @@ public class ConcertServiceTest {
                 .artistName("tester")
                 .build();
 
-        ReflectionTestUtils.setField(expectedConcert, CONCERT_ID, TSID.fast().toLong());
+        ReflectionTestUtils.setField(expectedConcert, CONCERT_ID, id);
 
         //when
-        Mockito.when(concertRepository.save(newConcert)).thenReturn(expectedConcert);
+        Mockito.when(concertRepository.save(any(ConcertEntity.class))).thenReturn(expectedConcert);
 
-        ConcertEntity savedConcert = concertService.createConcert(newConcert);
+        ConcertCreateDto.Response savedConcert = concertService.createConcert(request);
 
         //then
         Assertions.assertThat(savedConcert).isNotNull();
         Assertions.assertThat(savedConcert.getConcertId()).isNotNull();
-        Assertions.assertThat(savedConcert.isConcertAvailable()).isFalse();
     }
 
     @Test
@@ -71,7 +75,7 @@ public class ConcertServiceTest {
 
         Mockito.when(concertRepository.findById(concertId)).thenReturn(Optional.of(foundConcert));
 
-        ConcertEntity concert = concertService.findById(concertId);
+        ConcertInfoDto.Response concert = concertService.findById(concertId);
 
         Assertions.assertThat(concert.getConcertId()).isEqualTo(foundConcert.getConcertId());
 

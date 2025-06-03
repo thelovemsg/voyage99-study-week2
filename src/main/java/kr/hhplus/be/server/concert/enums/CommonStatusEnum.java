@@ -8,6 +8,6 @@ package kr.hhplus.be.server.concert.enums;
  * - ON_SELLING : 판매중
  * - EXPIRE : 만료
  */
-public enum ConcertStatus {
+public enum CommonStatusEnum {
     STOPPED, CHECKING, READY, ON_SELLING, EXPIRE;
 }
