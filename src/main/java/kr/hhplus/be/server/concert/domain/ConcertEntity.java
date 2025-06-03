@@ -6,17 +6,20 @@ import kr.hhplus.be.server.common.jpa.BaseEntity;
 import kr.hhplus.be.server.concert.enums.ConcertStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "concert")
-@Builder
+@Builder(toBuilder = true) // 새로운 객체를 생성하는 거기 때문에 toBuilder를 사용해도 영속성 관리가 되지 않아 dirty checking 일 발생하지 않는다.
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@DynamicUpdate
 public class ConcertEntity extends BaseEntity {
 
     @Id
@@ -47,14 +50,17 @@ public class ConcertEntity extends BaseEntity {
         if(ObjectUtils.isEmpty(startDate) || ObjectUtils.isEmpty(endDate))
             return false;
 
-        if(this.status == ConcertStatus.STOPPED || this.status == ConcertStatus.READY)
-            return false;
-
-        return true;
+        return this.status != ConcertStatus.STOPPED && this.status != ConcertStatus.READY;
     }
 
     public void openConcert() {
         this.status = ConcertStatus.ON_SELLING;
+    }
+
+    public void updateInfo(String concertName, String description, String artistName) {
+        this.concertName = concertName;
+        this.description = description;
+        this.artistName = artistName;
     }
 
 }

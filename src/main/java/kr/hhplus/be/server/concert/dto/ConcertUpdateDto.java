@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.point.dto;
+package kr.hhplus.be.server.concert.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -6,16 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ConcertCreateDto {
+public class ConcertUpdateDto {
 
     @Getter
     @Setter
     public static class Request {
-        private String
+        private Long concertId;
+        private String description;
+        private String concertName;
+        private String artistName;
     }
 
     public static class Response {
 
     }
-
 }
