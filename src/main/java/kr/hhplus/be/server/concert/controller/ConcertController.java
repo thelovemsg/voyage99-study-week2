@@ -25,4 +25,10 @@ public class ConcertController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createConcert(request));
     }
 
+    @DeleteMapping("/{id}")
+    public void createConcert(@PathVariable("id") long id) {
+        service.deleteConcertInfo(id);
+    }
+
+
 }

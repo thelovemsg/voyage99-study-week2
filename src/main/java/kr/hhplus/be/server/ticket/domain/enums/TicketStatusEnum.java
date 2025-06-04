@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.domain;
+package kr.hhplus.be.server.ticket.domain.enums;
 
 /**
  * RESERVED : 예약됨
@@ -6,7 +6,8 @@ package kr.hhplus.be.server.ticket.domain;
  * CANCELLED : 취소됨
  * EXPIRED : 만료됨
  */
-public enum TicketStatus {
+public enum TicketStatusEnum {
+    AVAILABLE,
     RESERVED,
     CONFIRMED,
     CANCELLED,
