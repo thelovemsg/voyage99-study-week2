@@ -4,12 +4,20 @@ import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.common.jpa.BaseEntity;
 import kr.hhplus.be.server.concert.enums.CommonStatusEnum;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "concert_schedule")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
 public class ConcertScheduleEntity extends BaseEntity {
 
     @Id
@@ -17,8 +25,8 @@ public class ConcertScheduleEntity extends BaseEntity {
     @Column(name = "concert_schedule_id")
     private Long concertScheduleId;
 
-    @Column(name = "order_id", nullable = false, updatable = false)
-    private Long orderId;
+    @Column(name = "concert_id", nullable = false, updatable = false)
+    private Long concertId;
 
     @Column(name = "venue_id", nullable = false, updatable = false)
     private Long venueId;
@@ -26,8 +34,11 @@ public class ConcertScheduleEntity extends BaseEntity {
     @Column(name = "concert_date")
     private LocalDate concertDate;
 
-    @Column(name = "concert_time")
-    private LocalTime concertTime;
+    @Column(name = "concert_start_time")
+    private LocalTime concertStartTime;
+
+    @Column(name = "concert_end_time")
+    private LocalTime concertEndTime;
 
     @Column(name = "total_seats_number")
     private Integer totalSeatsNumber;

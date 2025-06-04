@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.concert.service;
 
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.concert.dto.VenueCreateDto;
+import kr.hhplus.be.server.concert.controller.dto.VenueCreateDto;
 import kr.hhplus.be.server.concert.domain.VenueEntity;
-import kr.hhplus.be.server.concert.dto.VenueInfoDto;
+import kr.hhplus.be.server.concert.controller.dto.VenueInfoDto;
 import kr.hhplus.be.server.concert.repository.VenueRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +32,9 @@ class VenueServiceTest {
 
     @Test
     @DisplayName("공연장 정보 생성")
-    public void createVenueInfo() {
+    void createVenueInfo() {
         //given
-        Long id = IdUtils.getId();
+        Long id = IdUtils.getNewId();
 
         String venueName = "venueName";
         String venueCallNumber = "010-1111-2222";
@@ -68,17 +68,15 @@ class VenueServiceTest {
 
     @Test
     @DisplayName("공연장 정보 조회")
-    public void findVenueInfo() {
+    void findVenueInfo() {
         //given
-        Long id = IdUtils.getId();
+        Long id = IdUtils.getNewId();
 
         String venueName = "venueName";
         String venueCallNumber = "010-1111-2222";
         String venueAddress = "서울";
         Integer totalCapacity = 50;
         String description = "description";
-
-        VenueInfoDto.Response response = new VenueInfoDto.Response();
 
         VenueEntity expectedVenue = VenueEntity
                 .builder()

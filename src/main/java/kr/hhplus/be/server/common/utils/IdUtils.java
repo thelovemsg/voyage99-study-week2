@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IdUtils {
 
-    public static Long getId() {
+    public static Long getNewId() {
         return TSID.fast().toLong();
     }
 }
