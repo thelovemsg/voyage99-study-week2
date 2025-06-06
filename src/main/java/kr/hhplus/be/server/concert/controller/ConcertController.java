@@ -2,6 +2,7 @@ package kr.hhplus.be.server.concert.controller;
 
 import kr.hhplus.be.server.concert.controller.dto.ConcertCreateDto;
 import kr.hhplus.be.server.concert.controller.dto.ConcertInfoDto;
+import kr.hhplus.be.server.concert.controller.dto.ConcertUpdateDto;
 import kr.hhplus.be.server.concert.service.ConcertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,11 @@ public class ConcertController {
     @PostMapping
     public ResponseEntity<ConcertCreateDto.Response> createConcert(@RequestBody ConcertCreateDto.Request request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createConcert(request));
+    }
+
+    @PatchMapping
+    public ResponseEntity<Long> updateConcert(@RequestBody ConcertUpdateDto.Request request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.updateConcertInfo(request));
     }
 
     @DeleteMapping("/{id}")

@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.ticket.application.usecase;
+package kr.hhplus.be.server.ticket.application.port.in;
 
-import kr.hhplus.be.server.ticket.application.dto.GetTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.in.dto.GetTicketCommandDto;
 
 import java.util.List;
 

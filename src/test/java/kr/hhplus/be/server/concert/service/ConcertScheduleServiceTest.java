@@ -131,7 +131,7 @@ class ConcertScheduleServiceTest {
     @DisplayName("콘서트 일정 생성 에러 - 공연 시간 최소 30분 이상이어야 함.")
     void createConcertScheduleError() {
         //given
-        doThrow(new ParameterNotValidException(MessageCode.CONCERT_PLAY_TIME_NOT_PROPER_ERROR))
+        doThrow(new ParameterNotValidException(MessageCode.CONCERT_SCHEDULE_PLAY_TIME_NOT_PROPER_ERROR))
                 .when(concertScheduleValidator).validate(any(ConcertScheduleCreateDto.Request.class));
 
         //when

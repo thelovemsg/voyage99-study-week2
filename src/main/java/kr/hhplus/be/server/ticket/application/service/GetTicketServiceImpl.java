@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.ticket.application.service;
 
-import kr.hhplus.be.server.ticket.application.dto.GetTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.usecase.GetTicketUseCase;
+import kr.hhplus.be.server.ticket.application.port.in.dto.GetTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.in.GetTicketUseCase;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GetTicketService implements GetTicketUseCase {
+public class GetTicketServiceImpl implements GetTicketUseCase {
 
     @Override
     public GetTicketCommandDto.Response getTicket(Long ticketId) {

@@ -1,6 +1,9 @@
 package kr.hhplus.be.server.concert.service;
 
 import jakarta.transaction.Transactional;
+import kr.hhplus.be.server.common.exceptions.NotFoundException;
+import kr.hhplus.be.server.common.messages.MessageCode;
+import kr.hhplus.be.server.concert.controller.dto.ConcertScheduleInfoDto;
 import kr.hhplus.be.server.concert.domain.ConcertScheduleEntity;
 import kr.hhplus.be.server.concert.controller.dto.ConcertScheduleCreateDto;
 import kr.hhplus.be.server.concert.repository.ConcertScheduleRepository;
@@ -26,4 +29,8 @@ public class ConcertScheduleService {
         return ConcertScheduleCreateDto.Response.fromEntity(savedSchedule);
     }
 
+    public ConcertScheduleInfoDto.Response getConcertScheduleInfo(Long id) {
+        ConcertScheduleEntity entity = concertScheduleRepository.findById(id).orElseThrow(() -> new NotFoundException(MessageCode.CONCERT_SCHEDULE_NOT_FOUND, id));
+        return ConcertScheduleInfoDto.Response.fromEntity(entity);
+    }
 }

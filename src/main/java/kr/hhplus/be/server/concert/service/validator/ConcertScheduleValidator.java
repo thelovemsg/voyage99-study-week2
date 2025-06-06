@@ -45,7 +45,7 @@ public class ConcertScheduleValidator {
 
         Duration duration = Duration.between(startTime, endTime);
         if (duration.toMinutes() < 30) {
-            throw new ParameterNotValidException(MessageCode.CONCERT_PLAY_TIME_NOT_PROPER_ERROR, startTime, endTime);
+            throw new ParameterNotValidException(MessageCode.CONCERT_SCHEDULE_PLAY_TIME_NOT_PROPER_ERROR, startTime, endTime);
         }
     }
 }

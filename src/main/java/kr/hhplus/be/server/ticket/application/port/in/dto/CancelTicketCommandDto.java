@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.application.dto;
+package kr.hhplus.be.server.ticket.application.port.in.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -6,14 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GetTicketCommandDto {
+public class CancelTicketCommandDto {
 
     @Getter
     @Setter
     public static class Request{
-        private Long ticketId;
+        private Long userId;
+        private Long ticketTypeId;
+        private Long seatId;
+        private Long concertScheduleId;
     }
 
+    @Getter
+    @Setter
     public static class Response {
 
     }
