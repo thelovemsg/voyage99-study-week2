@@ -57,4 +57,8 @@ public class ConcertScheduleEntity extends BaseEntity {
             , foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private VenueEntity venue;
 
+    public boolean isAvailableForReservation() {
+        return this.scheduleStatus == CommonStatusEnum.ON_SELLING;
+    }
+
 }

@@ -1,19 +1,16 @@
 package kr.hhplus.be.server.ticket.application.service;
 
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
+import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
 import kr.hhplus.be.server.common.exceptions.ReservationNotValidException;
 import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.concert.domain.ConcertScheduleEntity;
-import kr.hhplus.be.server.concert.enums.CommonStatusEnum;
-import kr.hhplus.be.server.concert.repository.ConcertScheduleRepository;
 import kr.hhplus.be.server.ticket.application.port.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.repository.TicketRepository;
 import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;
 import kr.hhplus.be.server.user.domain.UserEntity;
-import kr.hhplus.be.server.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,17 +36,10 @@ class PurchaseTicketServiceImplTest {
     private TicketDomainService ticketDomainService;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private ConcertScheduleRepository concertScheduleRepository;
-
-    @Mock
     private TicketRepository ticketRepository;
 
     @InjectMocks
     private PurchaseTicketServiceImpl purchaseTicketService;
-
 
     // 공통 테스트 데이터
     private Long userId;
@@ -58,7 +48,6 @@ class PurchaseTicketServiceImplTest {
     private BigDecimal useAmount;
     private PurchaseTicketCommandDto.Request request;
     private UserEntity mockUser;
-    private ConcertScheduleEntity mockSchedule;
     private Ticket mockTicket;
     private Ticket savedTicket;
 
@@ -84,11 +73,6 @@ class PurchaseTicketServiceImplTest {
                 .pointAmount(new BigDecimal("100000"))
                 .build();
 
-        mockSchedule = ConcertScheduleEntity.builder()
-                .concertScheduleId(concertScheduleId)
-                .scheduleStatus(CommonStatusEnum.READY)
-                .build();
-
         mockTicket = new Ticket(
                 ticketId, null, 1L, concertScheduleId, "TKT001",
                 "콘서트 정보", "좌석 정보", TicketStatusEnum.AVAILABLE,
@@ -102,20 +86,17 @@ class PurchaseTicketServiceImplTest {
         );
     }
 
-
     @Test
     @DisplayName("티켓 구매 성공 테스트")
     void purchase_Success() {
         // Given
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
-        when(concertScheduleRepository.findById(concertScheduleId)).thenReturn(Optional.of(mockSchedule));
         when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.of(mockTicket));
+        when(ticketDomainService.validateUserHasEnoughPoint(userId, useAmount)).thenReturn(mockUser);
         when(ticketRepository.save(any(Ticket.class))).thenReturn(savedTicket);
-        when(userRepository.save(any(UserEntity.class))).thenReturn(mockUser);
 
-        doNothing().when(ticketDomainService).validateUserHasEnoughPoint(any(), any());
-        doNothing().when(ticketDomainService).validateConcertScheduleAvailable(any());
-        doNothing().when(ticketDomainService).validateTicketCanBeReserved(any(), any());
+        doNothing().when(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
+        doNothing().when(ticketDomainService).validateTicketCanBeReserved(mockTicket, userId);
+        doNothing().when(ticketDomainService).useUserPoint(mockUser, useAmount);
 
         // When
         PurchaseTicketCommandDto.Response response = purchaseTicketService.purchase(request);
@@ -125,97 +106,104 @@ class PurchaseTicketServiceImplTest {
         assertThat(response.getTicketId()).isEqualTo(ticketId);
         assertThat(response.isSuccess()).isTrue();
 
-        verify(userRepository).findById(userId);
-        verify(concertScheduleRepository).findById(concertScheduleId);
+        // 검증
         verify(ticketRepository).findByIdWithLock(ticketId);
-        verify(ticketDomainService).validateUserHasEnoughPoint(mockUser, useAmount);
-        verify(ticketDomainService).validateConcertScheduleAvailable(mockSchedule);
+        verify(ticketDomainService).validateUserHasEnoughPoint(userId, useAmount);
+        verify(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
         verify(ticketDomainService).validateTicketCanBeReserved(mockTicket, userId);
+        verify(ticketDomainService).useUserPoint(mockUser, useAmount);
         verify(ticketRepository).save(any(Ticket.class));
-        verify(userRepository).save(any(UserEntity.class));
-    }
-
-    @Test
-    @DisplayName("사용자를 찾을 수 없는 경우 예외 발생")
-    void purchase_UserNotFound_ThrowsException() {
-        // Given
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThatThrownBy(() -> purchaseTicketService.purchase(request))
-                .isInstanceOf(NotFoundException.class);
-
-        verify(userRepository).findById(userId);
-        verifyNoInteractions(concertScheduleRepository, ticketRepository, ticketDomainService);
-    }
-
-    @Test
-    @DisplayName("콘서트 스케줄을 찾을 수 없는 경우 예외 발생")
-    void purchase_ConcertScheduleNotFound_ThrowsException() {
-        // Given
-        Long userId = 1L;
-        Long concertScheduleId = 999L;
-
-        PurchaseTicketCommandDto.Request request = PurchaseTicketCommandDto.Request.builder()
-                .userId(userId)
-                .concertScheduleId(concertScheduleId)
-                .ticketId(1L)
-                .useAmount(new BigDecimal("50000"))
-                .build();
-
-        UserEntity mockUser = UserEntity.builder()
-                .userId(userId)
-                .pointAmount(new BigDecimal("100000"))
-                .build();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
-        when(concertScheduleRepository.findById(concertScheduleId)).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThatThrownBy(() -> purchaseTicketService.purchase(request))
-                .isInstanceOf(NotFoundException.class);
-
-        verify(userRepository).findById(userId);
-        verify(concertScheduleRepository).findById(concertScheduleId);
-        verifyNoInteractions(ticketRepository, ticketDomainService);
     }
 
     @Test
     @DisplayName("티켓을 찾을 수 없는 경우 예외 발생")
     void purchase_TicketNotFound_ThrowsException() {
         // Given
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
-        when(concertScheduleRepository.findById(concertScheduleId)).thenReturn(Optional.of(mockSchedule));
         when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.empty());
 
         // When & Then
         assertThatThrownBy(() -> purchaseTicketService.purchase(request))
                 .isInstanceOf(NotFoundException.class);
 
-        verify(userRepository).findById(userId);
-        verify(concertScheduleRepository).findById(concertScheduleId);
         verify(ticketRepository).findByIdWithLock(ticketId);
         verifyNoInteractions(ticketDomainService);
     }
 
     @Test
-    @DisplayName("포인트 부족으로 구매 실패")
+    @DisplayName("사용자 포인트 부족으로 구매 실패")
     void purchase_InsufficientPoint_ThrowsException() {
         // Given
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
-        when(concertScheduleRepository.findById(concertScheduleId)).thenReturn(Optional.of(mockSchedule));
         when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.of(mockTicket));
-
-        doThrow(new ReservationNotValidException(MessageCode.USER_POINT_NOT_ENOUGH))
-                .when(ticketDomainService).validateUserHasEnoughPoint(mockUser, useAmount);
+        when(ticketDomainService.validateUserHasEnoughPoint(userId, useAmount))
+                .thenThrow(new ParameterNotValidException(MessageCode.USER_POINT_NOT_ENOUGH));
 
         // When & Then
         assertThatThrownBy(() -> purchaseTicketService.purchase(request))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(ParameterNotValidException.class);
 
-        verify(ticketDomainService).validateUserHasEnoughPoint(mockUser, useAmount);
+        verify(ticketRepository).findByIdWithLock(ticketId);
+        verify(ticketDomainService).validateUserHasEnoughPoint(userId, useAmount);
         verify(ticketRepository, never()).save(any());
-        verify(userRepository, never()).save(any());
+        verify(ticketDomainService, never()).useUserPoint(any(), any());
     }
 
+    @Test
+    @DisplayName("콘서트 스케줄 예약 불가능 상태로 구매 실패")
+    void purchase_ConcertScheduleNotAvailable_ThrowsException() {
+        // Given
+        when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.of(mockTicket));
+        when(ticketDomainService.validateUserHasEnoughPoint(userId, useAmount)).thenReturn(mockUser);
+        doThrow(new ReservationNotValidException(MessageCode.CONCERT_SCHEDULE_NOT_AVAILABLE))
+                .when(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
+
+        // When & Then
+        assertThatThrownBy(() -> purchaseTicketService.purchase(request))
+                .isInstanceOf(ReservationNotValidException.class);
+
+        verify(ticketDomainService).validateUserHasEnoughPoint(userId, useAmount);
+        verify(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
+        verify(ticketRepository, never()).save(any());
+        verify(ticketDomainService, never()).useUserPoint(any(), any());
+    }
+
+    @Test
+    @DisplayName("티켓이 이미 예약된 상태로 구매 실패")
+    void purchase_TicketAlreadyReserved_ThrowsException() {
+        // Given
+        when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.of(mockTicket));
+        when(ticketDomainService.validateUserHasEnoughPoint(userId, useAmount)).thenReturn(mockUser);
+        doNothing().when(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
+        doThrow(new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED))
+                .when(ticketDomainService).validateTicketCanBeReserved(mockTicket, userId);
+
+        // When & Then
+        assertThatThrownBy(() -> purchaseTicketService.purchase(request))
+                .isInstanceOf(ParameterNotValidException.class);
+
+        verify(ticketDomainService).validateUserHasEnoughPoint(userId, useAmount);
+        verify(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
+        verify(ticketDomainService).validateTicketCanBeReserved(mockTicket, userId);
+        verify(ticketRepository, never()).save(any());
+        verify(ticketDomainService, never()).useUserPoint(any(), any());
+    }
+
+    @Test
+    @DisplayName("useUserPoint 실행 중 예외 발생으로 구매 실패")
+    void purchase_UseUserPointFails_ThrowsException() {
+        // Given
+        when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.of(mockTicket));
+        when(ticketDomainService.validateUserHasEnoughPoint(userId, useAmount)).thenReturn(mockUser);
+        doNothing().when(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
+        doNothing().when(ticketDomainService).validateTicketCanBeReserved(mockTicket, userId);
+        doThrow(new RuntimeException("포인트 사용 실패"))
+                .when(ticketDomainService).useUserPoint(mockUser, useAmount);
+
+        // When & Then
+        assertThatThrownBy(() -> purchaseTicketService.purchase(request))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("포인트 사용 실패");
+
+        verify(ticketDomainService).useUserPoint(mockUser, useAmount);
+        verify(ticketRepository, never()).save(any());
+    }
 }
