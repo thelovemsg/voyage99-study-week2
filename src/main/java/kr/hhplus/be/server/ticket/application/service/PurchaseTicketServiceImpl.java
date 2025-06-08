@@ -40,10 +40,9 @@ public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
         ticketDomainService.validateTicketCanBeReserved(ticket, userId);
 
         // 5. 비즈니스 로직 실행
-        ticket.reserve(userId);
+        ticketDomainService.useUserPoint(userEntity, request.getUseAmount());
 
         // 6. 저장
-        ticketDomainService.useUserPoint(userEntity, request.getUseAmount());
         ticketRepository.save(ticket);
 
         return PurchaseTicketCommandDto.Response.builder()
@@ -51,4 +50,5 @@ public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
                 .isSuccess(Boolean.TRUE)
                 .build();
     }
+
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 public class Ticket {
