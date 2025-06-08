@@ -6,8 +6,8 @@ import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.ticket.application.port.in.PurchaseTicketUseCase;
 import kr.hhplus.be.server.ticket.application.port.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
-import kr.hhplus.be.server.ticket.domain.repository.TicketRepository;
 import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketRepositoryAdapter;
 import kr.hhplus.be.server.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
 
     private final TicketDomainService ticketDomainService;
-    private final TicketRepository ticketRepository;
+    private final TicketRepositoryAdapter ticketRepository;
 
     @Override
     @Transactional

@@ -16,11 +16,11 @@ public class SeatEntity {
     @Column(name = "venue_id", nullable = false, updatable = false)
     private Long venueId;
 
-    @Column(name = "row")
-    private Integer row;
+    @Column(name = "`rows`")
+    private Integer rows;
 
-    @Column(name = "column")
-    private Integer column;
+    @Column(name = "`columns`")
+    private Integer columns;
 
     @Column(name = "description")
     private String description;
