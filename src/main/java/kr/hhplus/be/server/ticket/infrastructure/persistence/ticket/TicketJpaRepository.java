@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.infrastructure.persistence;
+package kr.hhplus.be.server.ticket.infrastructure.persistence.ticket;
 
 import jakarta.persistence.LockModeType;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;

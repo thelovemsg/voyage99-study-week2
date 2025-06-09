@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.application.port.in.dto;
+package kr.hhplus.be.server.ticket.application.port.ticket.in.dto;
 
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
@@ -18,8 +18,6 @@ public class GetTicketCommandDto {
     public static class Response {
 
         private Long ticketId;
-//        private Long userId;
-//        private Long seatId;
         private Long concertScheduleId;
         private String ticketNo;
         private String concertInfo;

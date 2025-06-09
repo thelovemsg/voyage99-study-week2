@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.infrastructure.persistence;
+package kr.hhplus.be.server.ticket.infrastructure.persistence.ticket;
 
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 

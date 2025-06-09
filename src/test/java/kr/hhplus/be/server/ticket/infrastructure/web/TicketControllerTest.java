@@ -1,13 +1,10 @@
 package kr.hhplus.be.server.ticket.infrastructure.web;
 
-import kr.hhplus.be.server.ticket.application.service.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 

@@ -1,13 +1,13 @@
-package kr.hhplus.be.server.ticket.application.service;
+package kr.hhplus.be.server.ticket.application.service.ticket;
 
 import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.messages.MessageCode;
-import kr.hhplus.be.server.ticket.application.port.in.PurchaseTicketUseCase;
-import kr.hhplus.be.server.ticket.application.port.in.dto.PurchaseTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.PurchaseTicketUseCase;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketRepositoryAdapter;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryAdapter;
 import kr.hhplus.be.server.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
 
     private final TicketDomainService ticketDomainService;
-    private final TicketRepositoryAdapter ticketRepository;
+    private final TicketRepositoryAdapter ticketRepositoryAdapter;
 
     @Override
     @Transactional
@@ -31,7 +31,7 @@ public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
         Long ticketId = request.getTicketId();
 
         // 3. 티켓 조회 (락 사용으로 동시성 제어)
-        Ticket ticket = ticketRepository.findByIdWithLock(ticketId)
+        Ticket ticket = ticketRepositoryAdapter.findByIdWithLock(ticketId)
                 .orElseThrow(() -> new NotFoundException(MessageCode.TICKET_NOT_FOUND, ticketId));
 
         // 4. 도메인 검증들
@@ -43,7 +43,7 @@ public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
         ticketDomainService.useUserPoint(userEntity, request.getUseAmount());
 
         // 6. 저장
-        ticketRepository.save(ticket);
+        ticketRepositoryAdapter.save(ticket);
 
         return PurchaseTicketCommandDto.Response.builder()
                 .ticketId(ticketId)

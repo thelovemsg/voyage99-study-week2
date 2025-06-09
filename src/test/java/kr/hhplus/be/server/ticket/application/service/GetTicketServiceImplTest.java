@@ -1,19 +1,15 @@
 package kr.hhplus.be.server.ticket.application.service;
 
-import io.hypersistence.utils.hibernate.id.Tsid;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
 import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
 import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.ticket.application.port.in.dto.GetTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.GetTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.service.ticket.GetTicketServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketEntity;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketMapper;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketRepositoryAdapter;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketEntity;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketMapper;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryAdapter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

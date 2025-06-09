@@ -1,12 +1,12 @@
-package kr.hhplus.be.server.ticket.application.service;
+package kr.hhplus.be.server.ticket.application.service.ticket;
 
 import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.messages.MessageCode;
-import kr.hhplus.be.server.ticket.application.port.in.ReserveTicketUseCase;
-import kr.hhplus.be.server.ticket.application.port.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.ReserveTicketUseCase;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketRepositoryAdapter;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

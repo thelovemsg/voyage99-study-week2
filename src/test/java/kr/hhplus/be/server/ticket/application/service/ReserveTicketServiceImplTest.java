@@ -1,17 +1,11 @@
 package kr.hhplus.be.server.ticket.application.service;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.ticket.application.port.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.service.ticket.ReserveTicketServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
-import kr.hhplus.be.server.ticket.domain.repository.TicketRepository;
-import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketEntity;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.TicketRepositoryAdapter;
-import org.junit.jupiter.api.Assertions;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +16,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;

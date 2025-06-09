@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.ticket.infrastructure.web;
 
-import kr.hhplus.be.server.ticket.application.port.in.dto.GetTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.port.in.dto.PurchaseTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.port.in.dto.ReserveTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.service.GetTicketServiceImpl;
-import kr.hhplus.be.server.ticket.application.service.PurchaseTicketServiceImpl;
-import kr.hhplus.be.server.ticket.application.service.ReserveTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.GetTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.service.ticket.GetTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.service.ticket.ReserveTicketServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

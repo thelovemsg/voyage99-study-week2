@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.application.port.in.dto;
+package kr.hhplus.be.server.ticket.application.port.ticket.in.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;

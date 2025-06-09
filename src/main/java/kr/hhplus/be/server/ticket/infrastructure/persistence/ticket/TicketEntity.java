@@ -1,11 +1,9 @@
-package kr.hhplus.be.server.ticket.infrastructure.persistence;
+package kr.hhplus.be.server.ticket.infrastructure.persistence.ticket;
 
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
-import kr.hhplus.be.server.concert.domain.ConcertEntity;
 import kr.hhplus.be.server.concert.domain.ConcertScheduleEntity;
 import kr.hhplus.be.server.concert.domain.SeatEntity;
-import kr.hhplus.be.server.concert.domain.VenueEntity;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.user.domain.UserEntity;
 import lombok.AllArgsConstructor;
