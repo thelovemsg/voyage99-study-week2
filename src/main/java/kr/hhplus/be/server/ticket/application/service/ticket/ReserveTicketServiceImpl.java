@@ -26,7 +26,7 @@ public class ReserveTicketServiceImpl implements ReserveTicketUseCase {
                 .orElseThrow(() -> new NotFoundException(MessageCode.TICKET_NOT_FOUND, ticketId));
         ticket.reserve(userId);
 
-        return new ReserveTicketCommandDto.Response(Boolean.TRUE);
+        return new ReserveTicketCommandDto.Response(ticketId);
     }
 
 }

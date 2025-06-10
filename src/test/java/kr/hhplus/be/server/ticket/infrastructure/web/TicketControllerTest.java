@@ -1,25 +1,199 @@
 package kr.hhplus.be.server.ticket.infrastructure.web;
 
+import kr.hhplus.be.server.common.utils.IdUtils;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.CreateTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.service.ticket.CreateTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.service.ticket.GetTicketServiceImpl;
 import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.service.ticket.ReserveTicketServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(TicketController.class)
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+
+@Slf4j
+@SpringBootTest
+@AutoConfigureMockMvc
 class TicketControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
+    private GetTicketServiceImpl getTicketService;
+
+    @MockitoBean
+    private CreateTicketServiceImpl createTicketService;
+
+    @MockitoBean
     private PurchaseTicketServiceImpl purchaseTicketService;
 
+    @MockitoBean
+    private ReserveTicketServiceImpl reserveTicketService;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    private String tempTicketNo;
+
+    @BeforeEach
+    void setup() {
+        this.tempTicketNo = "TICKET_NO_TEST_1111";
+    }
+
+    // 티켓 생성 - Long ticketId 반환하도록 수정
+    private Long createTicket(Long concertScheduleId, Long seatId) throws Exception {
+        CreateTicketCommandDto.Request request = new CreateTicketCommandDto.Request();
+        request.setConcertScheduleId(concertScheduleId);
+        request.setSeatId(seatId);
+
+        Long generatedTicketId = IdUtils.getNewId();
+        CreateTicketCommandDto.Response response = new CreateTicketCommandDto.Response();
+        response.setTicketId(generatedTicketId); // ticketNo → ticketId로 변경
+
+        Mockito.when(createTicketService.createTicket(any())).thenReturn(response);
+
+        String responseBody = mockMvc.perform(MockMvcRequestBuilders.post("/ticket")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return extractTicketId(responseBody);
+    }
+
+    // 예약 - Long ticketId 사용하도록 수정
+    private String reserveTicket(Long ticketId, Long userId) throws Exception {
+        ReserveTicketCommandDto.Request request = new ReserveTicketCommandDto.Request();
+        request.setTicketId(ticketId); // ticketNo → ticketId로 변경
+        request.setUserId(userId);
+
+        ReserveTicketCommandDto.Response response = new ReserveTicketCommandDto.Response();
+        response.setTicketId(ticketId);
+
+        Mockito.when(reserveTicketService.reserve(any())).thenReturn(response);
+
+        return mockMvc.perform(MockMvcRequestBuilders.patch("/ticket/reserve")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+    }
+
+    // 구매 메서드 (누락된 부분!)
+    private String purchaseTicket(Long ticketId, Long userId) throws Exception {
+        PurchaseTicketCommandDto.Request request = new PurchaseTicketCommandDto.Request();
+        request.setTicketId(ticketId);
+        request.setUserId(userId);
+
+        PurchaseTicketCommandDto.Response response = new PurchaseTicketCommandDto.Response();
+        response.setTicketId(ticketId);
+        response.setSuccess(Boolean.TRUE);
+
+        Mockito.when(purchaseTicketService.purchase(any())).thenReturn(response);
+
+        return mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+    }
+
+    private void purchaseTicketShouldFail(Long ticketId, Long userId) throws Exception {
+        PurchaseTicketCommandDto.Request request = new PurchaseTicketCommandDto.Request();
+        request.setTicketId(ticketId);
+        request.setUserId(userId);
+
+        // 실패 케이스 Mock 설정
+        Mockito.when(purchaseTicketService.purchase(any()))
+                .thenThrow(new IllegalStateException("이미 다른 사용자가 예약한 티켓입니다."));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+
+
     @Test
-    @DisplayName("티켓 구매 통합테스트")
-    void purchaseTicket() {
+    @DisplayName("단순 티켓 생성 테스트")
+    void purchaseTicketTest() throws Exception {
+        // Given
+        Long concertScheduleId = IdUtils.getNewId();
+        Long seatId = IdUtils.getNewId();
+
+        // When
+        Long tickedId = createTicket(concertScheduleId, seatId);
+
+        // Then
+        assertThat(tickedId).isNotNull();
+        log.info("티켓 생성 성공: {}", tickedId);
 
     }
+
+    /**
+     * 시나리오 - 심플 버전
+     * 1. 티켓 정보를 생성
+     * 2. 사용자가 생성한 티켓을 예약한다.
+     * 3. 사용자가 다시 구매를 시도하면 성공!
+     */
+    @Test
+    @DisplayName("티켓 생성 -> 예약 처리 -> 구매 테스트")
+    void create_reserve_purchase_test() throws Exception {
+        // Given
+        Long userAId = IdUtils.getNewId();
+        Long userBId = IdUtils.getNewId();
+        Long concertScheduleId = IdUtils.getNewId();
+        Long seatId = IdUtils.getNewId();
+
+        // 1. 티켓 생성 (Long ticketId 반환)
+        Long ticketId = createTicket(concertScheduleId, seatId);
+        log.info("1단계 - 티켓 생성 완료: {}", ticketId);
+
+        // 2. 사용자 A가 예약 (Long ticketId 사용)
+        String reserveResponse = reserveTicket(ticketId, userAId);
+        log.info("2단계 - 사용자 A 예약 완료: {}", reserveResponse);
+
+        // 3. 사용자 A가 구매 (Long ticketId 사용)
+        String purchaseResponse = purchaseTicket(ticketId, userAId);
+        log.info("3단계 - 사용자 A 구매 성공: {}", purchaseResponse);
+
+        // 검증
+        assertThat(ticketId).isNotNull();
+        assertThat(ticketId).isPositive();
+    }
+
+    private Long extractTicketId(String response) {
+        // JSON에서 ticketId 추출 로직
+        try {
+            JsonNode jsonNode = objectMapper.readTree(response);
+            return jsonNode.get("ticketId").asLong();
+        } catch (Exception e) {
+            throw new RuntimeException("티켓 ID 추출 실패: " + response, e);
+        }
+    }
+
 }

@@ -1,8 +1,10 @@
 package kr.hhplus.be.server.ticket.infrastructure.web;
 
+import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.CreateTicketCommandDto;
 import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.GetTicketCommandDto;
 import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.service.ticket.CreateTicketServiceImpl;
 import kr.hhplus.be.server.ticket.application.service.ticket.GetTicketServiceImpl;
 import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
 import kr.hhplus.be.server.ticket.application.service.ticket.ReserveTicketServiceImpl;
@@ -11,12 +13,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.OrientationRequested;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ticket")
 public class TicketController {
 
     private final GetTicketServiceImpl getTicketService;
+    private final CreateTicketServiceImpl createTicketService;
     private final PurchaseTicketServiceImpl purchaseTicketService;
     private final ReserveTicketServiceImpl reserveTicketService;
 
@@ -26,15 +31,21 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.OK).body(ticketResponse);
     }
 
+    @PostMapping
+    public ResponseEntity<CreateTicketCommandDto.Response> createTicket(CreateTicketCommandDto.Request request) {
+        CreateTicketCommandDto.Response createResponse = createTicketService.createTicket(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
+    }
+
     @PostMapping("/purchase")
     public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(PurchaseTicketCommandDto.Request request) {
         PurchaseTicketCommandDto.Response purchase = purchaseTicketService.purchase(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(purchase);
+        return ResponseEntity.status(HttpStatus.OK).body(purchase);
     }
 
-    @PostMapping("/reserve")
+    @PatchMapping("/reserve")
     public ResponseEntity<ReserveTicketCommandDto.Response> purchaseTicket(ReserveTicketCommandDto.Request request) {
         ReserveTicketCommandDto.Response reserve = reserveTicketService.reserve(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(reserve);
+        return ResponseEntity.status(HttpStatus.OK).body(reserve);
     }
 }

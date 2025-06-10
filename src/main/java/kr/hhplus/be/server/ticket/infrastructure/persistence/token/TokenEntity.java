@@ -22,7 +22,7 @@ public class TokenEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "token_id", nullable = false)
+    @Column(name = "queue_id", nullable = false)
     private Long queueId;
 
     @Column(name = "concert_schedule_id", nullable = false)

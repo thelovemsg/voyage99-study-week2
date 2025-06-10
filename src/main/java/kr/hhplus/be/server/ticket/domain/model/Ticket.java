@@ -42,14 +42,31 @@ public class Ticket {
     }
 
     // 정적 팩토리 메서드
-    public static Ticket create(Long userId, Long seatId, Long concertScheduleId,
-                                String ticketNo, BigDecimal totalAmount) {
+    public static Ticket createNewTicket(Long userId, Long seatId, Long concertScheduleId,
+                                         String ticketNo, BigDecimal totalAmount) {
         return new Ticket(
                 null, // ID는 저장 시 생성
                 userId,
                 seatId,
                 concertScheduleId,
                 ticketNo,
+                null, // concertInfo는 나중에 설정
+                null, // seatInfo는 나중에 설정
+                TicketStatusEnum.AVAILABLE,
+                null, // purchaseDateTime은 구매 완료 시 설정
+                totalAmount,
+                null, // reservedUntil
+                null  // reservedBy
+        );
+    }
+
+    public static Ticket createUnusedTicket(Long seatId, Long concertScheduleId, BigDecimal totalAmount) {
+        return new Ticket(
+                null, // ID는 저장 시 생성
+                null,
+                seatId,
+                concertScheduleId,
+                null,
                 null, // concertInfo는 나중에 설정
                 null, // seatInfo는 나중에 설정
                 TicketStatusEnum.AVAILABLE,

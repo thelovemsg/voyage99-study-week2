@@ -44,7 +44,7 @@ public class Token {
         return LocalDateTime.now().isAfter(expireAt);
     }
 
-    public void extendExpiry(int minutes) {
+    public void extendExpireTime(int minutes) {
         if (isExpired()) {
             throw new IllegalStateException(MessageCode.TOKEN_EXPIRED.getMessage());
         }

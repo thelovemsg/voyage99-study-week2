@@ -1,31 +1,27 @@
 package kr.hhplus.be.server.ticket.application.port.ticket.in.dto;
 
+import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ReserveTicketCommandDto {
+public class CreateTicketCommandDto {
 
     @Getter
     @Setter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Request{
-        private Long userId;
-        private Long ticketId;
+    public static class Request {
         private Long seatId;
         private Long concertScheduleId;
-        private BigDecimal useAmount;
     }
 
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
     public static class Response {
         private Long ticketId;
+
+        public static Response fromDomain(Ticket savedTicket) {
+            return new Response(savedTicket.getTicketId());
+        }
     }
 }

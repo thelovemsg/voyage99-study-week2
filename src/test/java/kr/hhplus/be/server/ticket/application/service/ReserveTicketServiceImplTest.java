@@ -66,7 +66,7 @@ class ReserveTicketServiceImplTest {
         ReserveTicketCommandDto.Response reservedResponse = reserveTicketService.reserve(request);
 
         //then
-        assertThat(reservedResponse.isSuccess()).isEqualTo(Boolean.TRUE);
+        assertThat(reservedResponse.getTicketId()).isNotNull();
     }
 
 }
