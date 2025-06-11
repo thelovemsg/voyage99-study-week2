@@ -24,8 +24,10 @@ public class IssueTokenCommandDto {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {
         private String rawTokenId;
+
     }
 }

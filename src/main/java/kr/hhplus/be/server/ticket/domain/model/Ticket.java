@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.ticket.domain.model;
 
+import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
+import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +30,9 @@ public class Ticket {
 
     // 비즈니스 메서드들
     public void reserve(Long userId) {
+        if(isReservedByOther(userId) || isReservationExpired()) {
+            throw new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED);
+        }
         this.reservedBy = userId;
         this.reservedUntil = LocalDateTime.now().plusMinutes(5);
         this.ticketStatus = TicketStatusEnum.RESERVED;

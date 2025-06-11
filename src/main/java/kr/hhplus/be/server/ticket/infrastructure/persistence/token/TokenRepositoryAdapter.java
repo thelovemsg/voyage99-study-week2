@@ -22,4 +22,11 @@ public class TokenRepositoryAdapter implements TokenRepository {
     public void save(Token token) {
         jpaRepository.save(TokenMapper.toEntity(token));
     }
+
+    @Override
+    public Optional<Token> findByEncryptedValue(String encryptedValue) {
+        return jpaRepository.findByEncryptedValue(encryptedValue).map(TokenMapper::toDomain);
+    }
+
+
 }

@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.ticket.application.port.token.in.dto;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidateTokenCommandDto {
@@ -14,7 +11,11 @@ public class ValidateTokenCommandDto {
         private String rawTokenId;
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Response {
-
+        private Boolean isValidToken;
     }
 }

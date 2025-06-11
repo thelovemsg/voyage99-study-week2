@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface TokenRepository {
     Optional<Token> findById(Long id);
     void save(Token token);
+    Optional<Token> findByEncryptedValue(String encryptedValue);
 }

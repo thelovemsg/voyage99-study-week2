@@ -32,19 +32,19 @@ public class TicketController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateTicketCommandDto.Response> createTicket(CreateTicketCommandDto.Request request) {
+    public ResponseEntity<CreateTicketCommandDto.Response> createTicket(@RequestBody CreateTicketCommandDto.Request request) {
         CreateTicketCommandDto.Response createResponse = createTicketService.createTicket(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
     }
 
     @PostMapping("/purchase")
-    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(PurchaseTicketCommandDto.Request request) {
+    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(@RequestBody PurchaseTicketCommandDto.Request request) {
         PurchaseTicketCommandDto.Response purchase = purchaseTicketService.purchase(request);
         return ResponseEntity.status(HttpStatus.OK).body(purchase);
     }
 
     @PatchMapping("/reserve")
-    public ResponseEntity<ReserveTicketCommandDto.Response> purchaseTicket(ReserveTicketCommandDto.Request request) {
+    public ResponseEntity<ReserveTicketCommandDto.Response> reserveTicket(@RequestBody ReserveTicketCommandDto.Request request) {
         ReserveTicketCommandDto.Response reserve = reserveTicketService.reserve(request);
         return ResponseEntity.status(HttpStatus.OK).body(reserve);
     }

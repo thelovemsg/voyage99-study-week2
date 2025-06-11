@@ -22,8 +22,9 @@ public class ReserveTicketServiceImpl implements ReserveTicketUseCase {
         Long ticketId = request.getTicketId();
         Long userId = request.getUserId();
 
-        Ticket ticket = ticketRepository.findByIdWithLock(ticketId)
+        Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new NotFoundException(MessageCode.TICKET_NOT_FOUND, ticketId));
+
         ticket.reserve(userId);
 
         return new ReserveTicketCommandDto.Response(ticketId);

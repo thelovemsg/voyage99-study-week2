@@ -20,7 +20,7 @@ public class TicketDomainService {
     private final ConcertScheduleValidationPort scheduleValidationPort; // 포트 의존
 
     public void validateTicketCanBeReserved(Ticket ticket, Long userId) {
-        if (ticket.isReservedByOther(userId) && !ticket.isReservationExpired()) {
+        if (ticket.isReservedByOther(userId) && !ticket.isReservationExpired() || !ticket.getUserId().equals(userId)) {
             throw new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED);
         }
     }
