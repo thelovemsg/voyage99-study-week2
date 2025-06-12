@@ -42,7 +42,14 @@ public enum MessageCode {
     CONCERT_SCHEDULE_NOT_AVAILABLE("공연장스케줄 예약이 가능하지 않습니다."),
 
     //공통
-    INPUT_DATE_RANGE_NOT_PROPER_ERROR("입력한 일정이 올바르지 않습니다.");
+    INPUT_DATE_RANGE_NOT_PROPER_ERROR("입력한 일정이 올바르지 않습니다."),
+
+    //대기열
+    QUEUE_NOT_FOUND("대기열을 찾을 수 없습니다"),
+    QUEUE_CREATE_SUCCESS("큐가 성공적으로 생성되었습니다."),
+    SERVICE_FULL("서비스가 만석입니다"),
+    NOT_YOUR_TURN("아직 순서가 아닙니다"),
+    QUEUE_ALREADY_EXISTS("이미 대기열에 등록되어 있습니다");
 
     private final String messageTemplate;
 
