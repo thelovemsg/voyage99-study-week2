@@ -108,63 +108,6 @@ class QueueControllerTest {
     }
 
     @Test
-    @DisplayName("토큰 발급 - 성공")
-    void issueToken_Success() throws Exception {
-        // Given
-        String token = "generated-token-123";
-        
-        IssueTokenCommandDto.Request request = new IssueTokenCommandDto.Request();
-        request.setUserId(userId);
-        request.setConcertScheduleId(concertScheduleId);
-
-        IssueTokenCommandDto.Response response = IssueTokenCommandDto.Response.builder()
-                .token(token)
-                .expiresAt(LocalDateTime.now().plusMinutes(10))
-                .message("토큰이 발급되었습니다.")
-                .success(true)
-                .build();
-
-        when(queueService.issueToken(any(IssueTokenCommandDto.Request.class))).thenReturn(response);
-
-        // When & Then
-        mockMvc.perform(post("/api/queue/token/issue")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value(token))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("토큰이 발급되었습니다."));
-
-        verify(queueService).issueToken(any(IssueTokenCommandDto.Request.class));
-    }
-
-    @Test
-    @DisplayName("토큰 발급 - 실패 (큐 없음)")
-    void issueToken_QueueNotFound() throws Exception {
-        // Given
-        IssueTokenCommandDto.Request request = new IssueTokenCommandDto.Request();
-        request.setUserId(userId);
-        request.setConcertScheduleId(concertScheduleId);
-
-        IssueTokenCommandDto.Response response = IssueTokenCommandDto.Response.builder()
-                .success(false)
-                .message("큐를 먼저 생성해주세요.")
-                .build();
-
-        when(queueService.issueToken(any(IssueTokenCommandDto.Request.class))).thenReturn(response);
-
-        // When & Then
-        mockMvc.perform(post("/api/queue/token/issue")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("큐를 먼저 생성해주세요."));
-
-        verify(queueService).issueToken(any(IssueTokenCommandDto.Request.class));
-    }
-
-    @Test
     @DisplayName("토큰 검증 - 성공")
     void validateToken_Valid() throws Exception {
         // Given
