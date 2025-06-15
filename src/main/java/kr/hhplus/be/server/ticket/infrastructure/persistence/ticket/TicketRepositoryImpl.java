@@ -6,6 +6,7 @@ import kr.hhplus.be.server.ticket.domain.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +53,21 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Override
     public boolean existsBySeatIdAndTicketStatus(Long seatId, TicketStatusEnum status) {
         return jpaRepository.existsBySeatIdAndTicketStatusEnum(seatId, status);
+    }
+
+    @Override
+    public int reserveTicketAtomically(Long ticketId, Long userId, LocalDateTime expireTime) {
+        return jpaRepository.reserveTicketAtomically(ticketId, userId, expireTime);
+    }
+
+    @Override
+    public void deleteAll() {
+        jpaRepository.deleteAll();
+    }
+
+    @Override
+    public void saveAll(List<TicketEntity> ticketEntities) {
+        jpaRepository.saveAll(ticketEntities);
     }
 
 

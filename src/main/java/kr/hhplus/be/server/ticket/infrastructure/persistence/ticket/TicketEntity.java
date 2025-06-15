@@ -79,4 +79,16 @@ public class TicketEntity {
     @JoinColumn(name = "concert_schedule_id", referencedColumnName = "concert_schedule_id", insertable = false, updatable = false
             , foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ConcertScheduleEntity concertSchedule;
+
+    public void setTicketStatusEnum(TicketStatusEnum ticketStatusEnum) {
+        this.ticketStatusEnum = ticketStatusEnum;
+    }
+
+    public void setReservedBy(Long reservedBy) {
+        this.reservedBy = reservedBy;
+    }
+
+    public void setReservedUntil(LocalDateTime reservedUntil) {
+        this.reservedUntil = reservedUntil;
+    }
 }
