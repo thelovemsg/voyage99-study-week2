@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("reserveTicketService")
 @RequiredArgsConstructor
 public class ReserveTicketServiceImpl implements ReserveTicketUseCase {
 

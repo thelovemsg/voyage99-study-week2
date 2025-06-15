@@ -13,12 +13,12 @@ public class PerformanceTestConfig {
 
     @Bean
     @Primary
-    public ReserveTicketUseCase pessimisticLockService(TicketRepository ticketRepository) {
+    public ReserveTicketUseCase reserveTicketService(TicketRepository ticketRepository) {
         return new ReserveTicketServiceImpl(ticketRepository);
     }
 
     @Bean
-    public ReserveTicketUseCase atomicUpdateService(TicketRepository ticketRepository) {
+    public ReserveTicketUseCase reserveTicketAtomicService(TicketRepository ticketRepository) {
         return new ReserveTicketAtomicServiceImpl(ticketRepository);
     }
 }

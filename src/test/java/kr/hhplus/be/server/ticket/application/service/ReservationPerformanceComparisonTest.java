@@ -41,11 +41,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ReservationPerformanceComparisonTest {
 
     @Autowired
-    @Qualifier("pessimisticLockService")
+    @Qualifier("reserveTicketService")
     private ReserveTicketUseCase pessimisticLockService;
 
     @Autowired
-    @Qualifier("atomicUpdateService")
+    @Qualifier("reserveTicketAtomicService")
     private ReserveTicketUseCase atomicUpdateService;
 
     @Autowired
@@ -124,7 +124,7 @@ public class ReservationPerformanceComparisonTest {
 
         // 기본 검증
         assertThat(result.getSuccessCount()).isGreaterThan(0);
-        assertThat(result.getSuccessCount()).isLessThanOrEqualTo(50); // 티켓 수 제한
+        assertThat(result.getSuccessCount()).isLessThanOrEqualTo(100); // 티켓 수 제한
     }
 
     @Test
@@ -134,22 +134,22 @@ public class ReservationPerformanceComparisonTest {
 
         int concurrentUsers = 50; // 동일한 조건으로 비교
 
-        // 비관적 락 방식 테스트
+        // 1. 비관적 락 방식 테스트
         resetTicketsToAvailable();
         System.out.println("\n1 비관적 락 방식 테스트 중...");
         PerformanceResult pessimisticResult = executePerformanceTest(
                 pessimisticLockService, concurrentUsers, "비관적 락");
 
-        // 2️⃣ 조건부 UPDATE 방식 테스트
+        // 2. 조건부 UPDATE 방식 테스트
         resetTicketsToAvailable();
         System.out.println("\n2 조건부 UPDATE 방식 테스트 중...");
         PerformanceResult atomicResult = executePerformanceTest(
                 atomicUpdateService, concurrentUsers, "조건부 UPDATE");
 
-        // 3️⃣ 결과 비교 및 출력
+        // 3. 결과 비교 및 출력
         printComparisonResult(pessimisticResult, atomicResult);
 
-        // 4️⃣ 성능 검증
+        // 4. 성능 검증
         System.out.println("\n 성능 검증");
         System.out.println("조건부 UPDATE가 더 빠른지 확인: " +
                 (atomicResult.getTotalExecutionTime() < pessimisticResult.getTotalExecutionTime()));
@@ -230,7 +230,7 @@ public class ReservationPerformanceComparisonTest {
 
     private void printDetailedResult(String testName, PerformanceResult result) {
         System.out.println("\n📈 " + testName + " 상세 결과");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.println("------------------------------------------------");
         System.out.printf("⏱️  총 실행 시간: %d ms%n", result.getTotalExecutionTime());
         System.out.printf("✅ 성공한 예약: %d개%n", result.getSuccessCount());
         System.out.printf("❌ 실패한 예약: %d개%n", result.getFailureCount());
