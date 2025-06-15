@@ -5,7 +5,7 @@ import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.ticket.application.port.ticket.in.GetTicketUseCase;
 import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.GetTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryAdapter;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GetTicketServiceImpl implements GetTicketUseCase {
 
-    private final TicketRepositoryAdapter ticketJpaRepository;
+    private final TicketRepositoryImpl ticketJpaRepository;
 
     @Override
     public GetTicketCommandDto.Response getTicket(Long ticketId) {

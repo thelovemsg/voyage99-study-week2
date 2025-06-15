@@ -7,9 +7,9 @@ import kr.hhplus.be.server.concert.domain.ConcertEntity;
 import kr.hhplus.be.server.concert.domain.ConcertScheduleEntity;
 import kr.hhplus.be.server.concert.domain.VenueEntity;
 import kr.hhplus.be.server.concert.controller.dto.ConcertScheduleCreateDto;
-import kr.hhplus.be.server.concert.repository.ConcertRepository;
-import kr.hhplus.be.server.concert.repository.ConcertScheduleRepository;
-import kr.hhplus.be.server.concert.repository.VenueRepository;
+import kr.hhplus.be.server.concert.repository.ConcertJpaRepository;
+import kr.hhplus.be.server.concert.repository.ConcertScheduleJpaRepository;
+import kr.hhplus.be.server.concert.repository.VenueJpaRepository;
 import kr.hhplus.be.server.concert.service.validator.ConcertScheduleValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,16 +31,16 @@ import static org.mockito.Mockito.*;
 class ConcertScheduleServiceTest {
 
     @Mock
-    private ConcertScheduleRepository concertScheduleRepository;
+    private ConcertScheduleJpaRepository concertScheduleJpaRepository;
 
     @Mock
-    private ConcertRepository concertRepository;
+    private ConcertJpaRepository concertJpaRepository;
 
     @Mock
     private ConcertScheduleValidator concertScheduleValidator;
 
     @Mock
-    private VenueRepository venueRepository;
+    private VenueJpaRepository venueJpaRepository;
 
     @InjectMocks
     private ConcertScheduleService concertScheduleService;
@@ -110,7 +110,7 @@ class ConcertScheduleServiceTest {
         // 또 선언하면 꼬여서 에러가 남.
 //        when(concertRepository.findById(concertId)).thenReturn(Optional.of(concert));
 //        when(venueRepository.findById(venueId)).thenReturn(Optional.of(venue));
-        when(concertScheduleRepository.save(any(ConcertScheduleEntity.class))).thenReturn(expectedScheduleEntity);
+        when(concertScheduleJpaRepository.save(any(ConcertScheduleEntity.class))).thenReturn(expectedScheduleEntity);
 
         //when
         ConcertScheduleCreateDto.Response result = concertScheduleService.createConcertSchedule(scheduleCreateRequestDto);
@@ -121,8 +121,8 @@ class ConcertScheduleServiceTest {
 
 //        verify(concertRepository).findById(concertId);
 //        verify(venueRepository).findById(venueId);
-        verify(concertScheduleRepository).save(any(ConcertScheduleEntity.class));
-        verify(concertScheduleRepository, times(1)).save(any(ConcertScheduleEntity.class));
+        verify(concertScheduleJpaRepository).save(any(ConcertScheduleEntity.class));
+        verify(concertScheduleJpaRepository, times(1)).save(any(ConcertScheduleEntity.class));
         verify(concertScheduleValidator, times(1)).validate(scheduleCreateRequestDto);
 
     }
@@ -140,7 +140,7 @@ class ConcertScheduleServiceTest {
 
         //then
         verify(concertScheduleValidator, times(1)).validate(scheduleCreateRequestDto);
-        verify(concertScheduleRepository, never()).save(any());
+        verify(concertScheduleJpaRepository, never()).save(any());
     }
 
     @Test
@@ -156,7 +156,7 @@ class ConcertScheduleServiceTest {
 
         //then
         verify(concertScheduleValidator, times(1)).validate(scheduleCreateRequestDto);
-        verify(concertScheduleRepository, never()).save(any());
+        verify(concertScheduleJpaRepository, never()).save(any());
     }
 
 }

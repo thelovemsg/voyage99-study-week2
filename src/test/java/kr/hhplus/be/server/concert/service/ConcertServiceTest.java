@@ -6,7 +6,7 @@ import kr.hhplus.be.server.concert.controller.dto.ConcertCreateDto;
 import kr.hhplus.be.server.concert.controller.dto.ConcertInfoDto;
 import kr.hhplus.be.server.concert.domain.ConcertEntity;
 import kr.hhplus.be.server.concert.controller.dto.ConcertUpdateDto;
-import kr.hhplus.be.server.concert.repository.ConcertRepository;
+import kr.hhplus.be.server.concert.repository.ConcertJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class ConcertServiceTest {
 
     @Mock
-    private ConcertRepository concertRepository;
+    private ConcertJpaRepository concertJpaRepository;
 
     @InjectMocks
     private ConcertService concertService;
@@ -52,7 +52,7 @@ public class ConcertServiceTest {
         ReflectionTestUtils.setField(expectedConcert, CONCERT_ID, id);
 
         //when
-        Mockito.when(concertRepository.save(any(ConcertEntity.class))).thenReturn(expectedConcert);
+        Mockito.when(concertJpaRepository.save(any(ConcertEntity.class))).thenReturn(expectedConcert);
 
         ConcertCreateDto.Response savedConcert = concertService.createConcert(request);
 
@@ -73,7 +73,7 @@ public class ConcertServiceTest {
                 .artistName("tester")
                 .build();
 
-        Mockito.when(concertRepository.findById(concertId)).thenReturn(Optional.of(foundConcert));
+        Mockito.when(concertJpaRepository.findById(concertId)).thenReturn(Optional.of(foundConcert));
 
         ConcertInfoDto.Response concert = concertService.findById(concertId);
 
@@ -86,7 +86,7 @@ public class ConcertServiceTest {
     public void 콘서트조회_데이터_미존재() {
         long concertId = TSID.fast().toLong();
 
-        Mockito.when(concertRepository.findById(concertId)).thenReturn(Optional.empty());
+        Mockito.when(concertJpaRepository.findById(concertId)).thenReturn(Optional.empty());
 
         Assertions.assertThatThrownBy(() -> concertService.findById(concertId))
                 .isInstanceOf(NotFoundException.class);
@@ -113,11 +113,11 @@ public class ConcertServiceTest {
         request.setArtistName("new artistName");
 
         //when
-        Mockito.when(concertRepository.findById(concertId)).thenReturn(Optional.of(existingUser));
+        Mockito.when(concertJpaRepository.findById(concertId)).thenReturn(Optional.of(existingUser));
         Long updatedConcertId = concertService.updateConcertInfo(request);
 
         //then
-        Mockito.verify(concertRepository).findById(concertId);
+        Mockito.verify(concertJpaRepository).findById(concertId);
 
         Assertions.assertThat(updatedConcertId).isEqualTo(concertId);
         Assertions.assertThat(existingUser.getArtistName()).isEqualTo("new artistName");
@@ -139,12 +139,12 @@ public class ConcertServiceTest {
                 .build();
 
         //when
-        Mockito.when(concertRepository.findById(concertId)).thenReturn(Optional.of(existingUser));
+        Mockito.when(concertJpaRepository.findById(concertId)).thenReturn(Optional.of(existingUser));
         concertService.deleteConcertInfo(concertId);
 
         //then
-        Mockito.verify(concertRepository).findById(concertId);
-        Mockito.verify(concertRepository).delete(existingUser);
+        Mockito.verify(concertJpaRepository).findById(concertId);
+        Mockito.verify(concertJpaRepository).delete(existingUser);
     }
 
 }

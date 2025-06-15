@@ -7,7 +7,7 @@ import kr.hhplus.be.server.concert.controller.dto.ConcertCreateDto;
 import kr.hhplus.be.server.concert.controller.dto.ConcertInfoDto;
 import kr.hhplus.be.server.concert.domain.ConcertEntity;
 import kr.hhplus.be.server.concert.controller.dto.ConcertUpdateDto;
-import kr.hhplus.be.server.concert.repository.ConcertRepository;
+import kr.hhplus.be.server.concert.repository.ConcertJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConcertService {
 
-    private final ConcertRepository repository;
+    private final ConcertJpaRepository repository;
 
     public ConcertInfoDto.Response findById(Long concertId) {
         ConcertEntity concertEntity = repository.findById(concertId).orElseThrow(() -> new NotFoundException(MessageCode.CONCERT_NOT_FOUND, concertId));

@@ -9,7 +9,7 @@ import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketEntity;
 import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketMapper;
-import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryAdapter;
+import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ import java.util.Optional;
 class GetTicketServiceImplTest {
 
     @Mock
-    TicketRepositoryAdapter ticketRepositoryAdapter;
+    TicketRepositoryImpl ticketRepositoryImpl;
 
     @InjectMocks
     GetTicketServiceImpl service;
@@ -95,7 +95,7 @@ class GetTicketServiceImplTest {
         Ticket ticketDomain = TicketMapper.toDomain(this.mockTicket);
 
         //when
-        Mockito.when(ticketRepositoryAdapter.findById(this.ticketId)).thenReturn(Optional.of(ticketDomain));
+        Mockito.when(ticketRepositoryImpl.findById(this.ticketId)).thenReturn(Optional.of(ticketDomain));
 
         //then
         GetTicketCommandDto.Response ticket = service.getTicket(ticketId);
@@ -112,13 +112,13 @@ class GetTicketServiceImplTest {
         Ticket ticketDomain = TicketMapper.toDomain(this.mockTicket);
 
         //when
-        Mockito.when(ticketRepositoryAdapter.findById(this.ticketId)).thenThrow(new ParameterNotValidException(MessageCode.TICKET_NOT_FOUND));
+        Mockito.when(ticketRepositoryImpl.findById(this.ticketId)).thenThrow(new ParameterNotValidException(MessageCode.TICKET_NOT_FOUND));
 
         //then
         assertThatThrownBy(() -> service.getTicket(ticketId))
                 .isInstanceOf(RuntimeException.class);
 
-        Mockito.verify(ticketRepositoryAdapter).findById(ticketId);
+        Mockito.verify(ticketRepositoryImpl).findById(ticketId);
 
     }
 

@@ -4,7 +4,7 @@ import kr.hhplus.be.server.common.utils.IdUtils;
 import kr.hhplus.be.server.concert.controller.dto.VenueCreateDto;
 import kr.hhplus.be.server.concert.domain.VenueEntity;
 import kr.hhplus.be.server.concert.controller.dto.VenueInfoDto;
-import kr.hhplus.be.server.concert.repository.VenueRepository;
+import kr.hhplus.be.server.concert.repository.VenueJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 class VenueServiceTest {
 
     @Mock
-    private VenueRepository venueRepository;
+    private VenueJpaRepository venueJpaRepository;
 
     @InjectMocks
     private VenueService venueService;
@@ -58,7 +58,7 @@ class VenueServiceTest {
         ReflectionTestUtils.setField(expectedVenue, VENUE_ID, id);
 
         //when
-        Mockito.when(venueRepository.save(any(VenueEntity.class))).thenReturn(expectedVenue);
+        Mockito.when(venueJpaRepository.save(any(VenueEntity.class))).thenReturn(expectedVenue);
         VenueCreateDto.Response savedVenue = venueService.createVenue(request);
 
         //then
@@ -90,7 +90,7 @@ class VenueServiceTest {
         ReflectionTestUtils.setField(expectedVenue, VENUE_ID, id);
 
         //when
-        Mockito.when(venueRepository.findById(id)).thenReturn(Optional.of(expectedVenue));
+        Mockito.when(venueJpaRepository.findById(id)).thenReturn(Optional.of(expectedVenue));
         VenueInfoDto.Response foundVenue = venueService.findVenue(id);
 
         //then

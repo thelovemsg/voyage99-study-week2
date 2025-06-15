@@ -38,7 +38,7 @@ public class TicketController {
     }
 
     @PostMapping("/purchase")
-    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(@RequestBody PurchaseTicketCommandDto.Request request) {
+    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(@RequestBody PurchaseTicketCommandDto.Request request) throws Exception {
         PurchaseTicketCommandDto.Response purchase = purchaseTicketService.purchase(request);
         return ResponseEntity.status(HttpStatus.OK).body(purchase);
     }

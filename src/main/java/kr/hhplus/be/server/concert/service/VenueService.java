@@ -6,7 +6,7 @@ import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.concert.domain.VenueEntity;
 import kr.hhplus.be.server.concert.controller.dto.VenueCreateDto;
 import kr.hhplus.be.server.concert.controller.dto.VenueInfoDto;
-import kr.hhplus.be.server.concert.repository.VenueRepository;
+import kr.hhplus.be.server.concert.repository.VenueJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VenueService {
 
-    private final VenueRepository repository;
+    private final VenueJpaRepository repository;
 
     @Transactional
     public VenueCreateDto.Response createVenue(VenueCreateDto.Request request) {

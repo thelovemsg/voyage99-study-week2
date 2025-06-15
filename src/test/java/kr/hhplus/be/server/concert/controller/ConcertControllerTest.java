@@ -5,7 +5,7 @@ import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.concert.controller.dto.ConcertCreateDto;
 import kr.hhplus.be.server.concert.controller.dto.ConcertInfoDto;
-import kr.hhplus.be.server.concert.repository.ConcertRepository;
+import kr.hhplus.be.server.concert.repository.ConcertJpaRepository;
 import kr.hhplus.be.server.concert.service.ConcertService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class ConcertControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private ConcertRepository repository;
+    private ConcertJpaRepository repository;
 
     // @MockBean이 deprecated 되었다고 한다!
     @MockitoBean

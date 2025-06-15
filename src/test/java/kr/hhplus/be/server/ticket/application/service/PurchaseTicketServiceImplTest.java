@@ -77,19 +77,19 @@ class PurchaseTicketServiceImplTest {
         mockTicket = new Ticket(
                 ticketId, null, 1L, concertScheduleId, "TKT001",
                 "콘서트 정보", "좌석 정보", TicketStatusEnum.AVAILABLE,
-                null, useAmount, null, null
+                null, useAmount, null, null, null
         );
 
         savedTicket = new Ticket(
                 ticketId, userId, 1L, concertScheduleId, "TKT001",
                 "콘서트 정보", "좌석 정보", TicketStatusEnum.RESERVED,
-                null, useAmount, LocalDateTime.now().plusMinutes(5), userId
+                null, useAmount, null,  LocalDateTime.now().plusMinutes(5), userId
         );
     }
 
     @Test
     @DisplayName("티켓 구매 성공 테스트")
-    void purchase_Success() {
+    void purchase_Success() throws Exception {
         // Given
         when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.of(mockTicket));
         when(ticketDomainService.validateUserHasEnoughPoint(userId, useAmount)).thenReturn(mockUser);

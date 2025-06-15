@@ -55,6 +55,9 @@ public class TicketEntity {
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
+    @Column(name = "cancelled_at")
+    private LocalDateTime cancelledAt;
+
     // 예약 관련 필드 (임시 예약용)
     @Column(name = "reserved_until")
     private LocalDateTime reservedUntil;

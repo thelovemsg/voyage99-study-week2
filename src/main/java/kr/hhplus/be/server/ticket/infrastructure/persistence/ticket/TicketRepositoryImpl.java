@@ -8,11 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class TicketRepositoryAdapter implements TicketRepository {
+public class TicketRepositoryImpl implements TicketRepository {
 
     private final TicketJpaRepository jpaRepository;
 
@@ -33,7 +32,7 @@ public class TicketRepositoryAdapter implements TicketRepository {
         List<TicketEntity> entities = jpaRepository.findByUserId(userId);
         return entities.stream()
                 .map(TicketMapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -41,7 +40,7 @@ public class TicketRepositoryAdapter implements TicketRepository {
         List<TicketEntity> list = jpaRepository.findListByConcertScheduleId(concertScheduleId);
         return list.stream()
                 .map(TicketMapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -61,4 +60,5 @@ public class TicketRepositoryAdapter implements TicketRepository {
         Optional<TicketEntity> entityOptional = jpaRepository.findByIdWithLock(ticketId);
         return entityOptional.map(TicketMapper::toDomain);
     }
+
 }
