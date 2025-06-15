@@ -23,4 +23,6 @@ public interface QueueRepository extends JpaRepository<QueueEntity, Long> {
     
     // 특정 상태와 콘서트 스케줄로 대기열 개수 조회
     int countByStatusAndConcertScheduleId(QueueStatus status, Long concertScheduleId);
+
+    Optional<QueueEntity> findByUserIdAndConcertScheduleIdAndEncryptedToken(Long userId, Long concertScheduleId, String encryptedToken);
 }

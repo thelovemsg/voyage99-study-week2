@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.queue.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import kr.hhplus.be.server.queue.domain.QueueEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,5 +30,6 @@ public class TokenValidateCommandDto {
         private String message;
         private LocalDateTime expiresAt;
         private String status;
+
     }
 }

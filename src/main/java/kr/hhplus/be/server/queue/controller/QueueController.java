@@ -26,23 +26,6 @@ public class QueueController {
     }
     
     /**
-     * 토큰 발급
-     */
-    @PostMapping("/token/issue")
-    public ResponseEntity<IssueTokenCommandDto.Response> issueToken(@RequestBody IssueTokenCommandDto.Request request) {
-        log.info("토큰 발급 요청: userId={}, concertScheduleId={}", 
-                request.getUserId(), request.getConcertScheduleId());
-        
-        IssueTokenCommandDto.Response response = queueService.issueToken(request);
-        
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
-    
-    /**
      * 토큰 검증
      */
     @PostMapping("/token/validate")

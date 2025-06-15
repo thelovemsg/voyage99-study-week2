@@ -26,6 +26,7 @@ public enum MessageCode {
     TICKET_RESERVATION_NOT_AVAILABLE("티켓 예약이 불가능합니다."),
 
     //토큰
+    TOKEN_VALID("토큰이 유효합니다."),
     TOKEN_IS_NOT_VALID("토큰이 유효하지 않습니다."),
     TOKEN_NOT_FOUND("토큰을 찾을 수 없습니다. [tokenId: {0}]"),
     TOKEN_EXPIRED("토큰이 만료되었습니다. [만료시간: {0}]"),

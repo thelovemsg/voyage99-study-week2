@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.queue.controller.dto;
 
+import kr.hhplus.be.server.common.messages.MessageCode;
+import kr.hhplus.be.server.queue.domain.QueueEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +29,18 @@ public class QueueCreateCommandDto {
         private Long userId;
         private String status;
         private String message;
+        private String token;
         private LocalDateTime createdAt;
+
+        public static Response fromEntity(QueueEntity queueEntity, String userToken, String message) {
+            return Response.builder()
+                    .queueId(queueEntity.getQueueId())
+                    .userId(queueEntity.getUserId())
+                    .token(userToken)
+                    .status(queueEntity.getStatus().name())
+                    .message(message)
+                    .createdAt(queueEntity.getCreatedAt())
+                    .build();
+        }
     }
 }
