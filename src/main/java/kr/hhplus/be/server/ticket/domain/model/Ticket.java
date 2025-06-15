@@ -33,16 +33,11 @@ public class Ticket {
 
 
     public void reserve(Long userId) {
-        // 🆕 예약 가능 상태 체크 추가
         if (!isReservable()) {
             throw new ParameterNotValidException(MessageCode.TICKET_RESERVATION_NOT_AVAILABLE);
         }
 
-        if (isReservationExpired()) {
-            clearReservation();
-        }
-
-        if (isReservedByOther(userId)) {
+        if (!isReservationExpired() && isReservedByOther(userId)) {
             throw new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED);
         }
 
