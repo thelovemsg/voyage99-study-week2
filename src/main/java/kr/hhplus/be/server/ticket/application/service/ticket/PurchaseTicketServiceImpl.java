@@ -39,11 +39,11 @@ public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
                     .orElseThrow(() -> new NotFoundException(MessageCode.TICKET_NOT_FOUND, ticketId));
 
             // 4. 도메인 검증들
-            UserEntity userEntity = ticketDomainService.validateUserHasEnoughPoint(userId, request.getUseAmount());
             ticketDomainService.validateConcertScheduleAvailable(concertScheduleId);
             ticketDomainService.validateTicketCanBeReserved(ticket, userId);
 
             // 5. 비즈니스 로직 실행
+            UserEntity userEntity = ticketDomainService.validateUserHasEnoughPoint(userId, request.getUseAmount());
             ticketDomainService.useUserPoint(userEntity, request.getUseAmount());
 
             // 6. 저장

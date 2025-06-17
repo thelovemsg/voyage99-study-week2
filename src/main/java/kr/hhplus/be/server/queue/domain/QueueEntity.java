@@ -85,4 +85,12 @@ public class QueueEntity extends BaseEntity {
     public boolean isTokenExpired() {
         return this.expiresAt != null && LocalDateTime.now().isAfter(this.expiresAt);
     }
+
+    public void activate() {
+        this.status = QueueStatus.ACTIVE;
+    }
+
+    public void incrementRetryCount() {
+
+    }
 }

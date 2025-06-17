@@ -51,6 +51,7 @@ public class Ticket {
     }
 
     public boolean isReservationExpired() {
+        if(reservedBy == null) return Boolean.TRUE;
         return reservedUntil != null && LocalDateTime.now().isAfter(reservedUntil);
     }
 

@@ -34,7 +34,7 @@ public class UserEntity {
     }
 
     public void usePoint(BigDecimal point) {
-        this.pointAmount = this.pointAmount.add(point);
+        this.pointAmount = this.pointAmount.subtract(point);
     }
 
     public boolean hasEnoughPoint(BigDecimal amount) {

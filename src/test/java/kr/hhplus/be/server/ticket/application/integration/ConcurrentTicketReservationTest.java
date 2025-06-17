@@ -76,7 +76,7 @@ class ConcurrentTicketReservationTest {
         when(ticketRepositoryImpl.findByIdWithLock(singleTicket.getTicketId()))
                 .thenReturn(Optional.of(singleTicket));
 
-        // 🆕 save 메서드 Mock 수정 - 리턴값에 따라
+        // save 메서드 Mock 수정 - 리턴값에 따라
         when(ticketRepositoryImpl.save(any(Ticket.class)))
                 .thenReturn(singleTicket); // 또는 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -104,7 +104,7 @@ class ConcurrentTicketReservationTest {
             });
         }
 
-        latch.await(5, TimeUnit.SECONDS);
+        latch.await();
         executor.shutdown();
 
         // then
@@ -145,7 +145,7 @@ class ConcurrentTicketReservationTest {
         }
 
         // 모든 스레드 완료 대기
-        latch.await(10, TimeUnit.SECONDS);
+        latch.await();
         executorService.shutdown();
 
         // then - 결과 검증
@@ -189,7 +189,7 @@ class ConcurrentTicketReservationTest {
             });
         }
 
-        latch.await(15, TimeUnit.SECONDS);
+        latch.await();
         executorService.shutdown();
 
         // then

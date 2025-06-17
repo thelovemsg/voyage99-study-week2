@@ -5,6 +5,7 @@ import kr.hhplus.be.server.queue.enums.QueueStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
@@ -25,4 +26,6 @@ public interface QueueRepository extends JpaRepository<QueueEntity, Long> {
     int countByStatusAndConcertScheduleId(QueueStatus status, Long concertScheduleId);
 
     Optional<QueueEntity> findByUserIdAndConcertScheduleIdAndEncryptedToken(Long userId, Long concertScheduleId, String encryptedToken);
+
+    Collection<QueueEntity> findByStatusOrderByQueuePositionAsc(QueueStatus queueStatus);
 }
