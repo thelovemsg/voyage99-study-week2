@@ -28,7 +28,7 @@ public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
 
     @Override
     @Transactional
-    public PurchaseTicketCommandDto.Response purchase(PurchaseTicketCommandDto.Request request) throws Exception {
+    public PurchaseTicketCommandDto.Response purchaseWithPessimicticLock(PurchaseTicketCommandDto.Request request) throws Exception {
         Long userId = request.getUserId();
         Long concertScheduleId = request.getConcertScheduleId();
         Long ticketId = request.getTicketId();
@@ -56,6 +56,44 @@ public class PurchaseTicketServiceImpl implements PurchaseTicketUseCase {
                     .build();
         } catch (Exception e) {
             log.error("purchase ticket exception", e);
+            throw new TicketPurchaseException(MessageCode.TICKET_PURCHASE_ERROR, ticketId);
+        }
+    }
+
+    @Override
+    public PurchaseTicketCommandDto.Response purchaseWithUpdateLock(PurchaseTicketCommandDto.Request request) throws Exception {
+        Long userId = request.getUserId();
+        Long concertScheduleId = request.getConcertScheduleId();
+        Long ticketId = request.getTicketId();
+
+        try {
+            // 1. 티켓 조회 (일반 조회, 락 없음)
+            Ticket ticket = ticketRepositoryImpl.findById(ticketId)
+                    .orElseThrow(() -> new NotFoundException(MessageCode.TICKET_NOT_FOUND, ticketId));
+
+            // 2. 도메인 검증들
+            ticketDomainService.validateConcertScheduleAvailable(concertScheduleId);
+            ticketDomainService.validateTicketCanBeReserved(ticket, userId);
+
+            // 3. 비즈니스 로직 실행
+            UserEntity userEntity = ticketDomainService.validateUserHasEnoughPoint(userId, request.getUseAmount());
+            ticketDomainService.useUserPoint(userEntity, request.getUseAmount());
+
+            // 4. 낙관적 업데이트 시도 (여기서 동시성 제어)
+            ticket.completePurchase(userId); // 상태를 PAID로 변경
+            int updatedRows = ticketRepositoryImpl.updateWithOptimisticLock(ticket);
+
+            // 5. 업데이트 실패 시 예외 발생 (다른 사용자가 먼저 구매)
+            if (updatedRows == 0) {
+                throw new TicketPurchaseException(MessageCode.TICKET_PURCHASE_ERROR, ticketId);
+            }
+
+            return PurchaseTicketCommandDto.Response.builder()
+                    .ticketId(ticketId)
+                    .isSuccess(Boolean.TRUE)
+                    .build();
+        } catch (Exception e) {
+            log.error("purchase ticket with update lock exception", e);
             throw new TicketPurchaseException(MessageCode.TICKET_PURCHASE_ERROR, ticketId);
         }
     }

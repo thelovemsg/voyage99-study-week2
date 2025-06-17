@@ -70,6 +70,11 @@ public class TicketRepositoryImpl implements TicketRepository {
         jpaRepository.saveAll(ticketEntities);
     }
 
+    @Override
+    public int updateWithOptimisticLock(Ticket ticket) {
+        return jpaRepository.updateWithOptimisticLock(ticket.getTicketId(), TicketStatusEnum.PAID, ticket.getUserId(), ticket.getUserId(),  LocalDateTime.now());
+    }
+
 
     @Override
     public Optional<Ticket> findByIdWithLock(Long ticketId) {

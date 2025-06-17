@@ -131,7 +131,7 @@ public class ConcurrentTicketPurchaseAmountLimitTest {
             executor.submit(() -> {
                 try {
                     PurchaseTicketCommandDto.Request request = createPurchaseRequest(singleTicket.getTicketId(), userId);
-                    purchaseTicketService.purchase(request);
+                    purchaseTicketService.purchaseWithPessimicticLock(request);
                     successCount.incrementAndGet();
                     System.out.println("사용자 " + userId + " 예약 성공");
                 } catch (Exception e) {
@@ -189,7 +189,7 @@ public class ConcurrentTicketPurchaseAmountLimitTest {
             executor.submit(() -> {
                 try {
                     PurchaseTicketCommandDto.Request request = createPurchaseRequest(ticket.getTicketId(), userId);
-                    purchaseTicketService.purchase(request);
+                    purchaseTicketService.purchaseWithPessimicticLock(request);
                     successCount.incrementAndGet();
                     System.out.println("사용자 " + userId + " 예약 성공");
                 } catch (Exception e) {
@@ -235,7 +235,7 @@ public class ConcurrentTicketPurchaseAmountLimitTest {
             executor.submit(() -> {
                 try {
                     PurchaseTicketCommandDto.Request request = createPurchaseRequest(ticket.getTicketId(), userId);
-                    purchaseTicketService.purchase(request);
+                    purchaseTicketService.purchaseWithPessimicticLock(request);
                     successCount.incrementAndGet();
                     System.out.println("사용자 " + userId + " 티켓 " + index + " 구매 성공");
                 } catch (Exception e) {

@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.OrientationRequested;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ticket")
@@ -39,7 +37,7 @@ public class TicketController {
 
     @PostMapping("/purchase")
     public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(@RequestBody PurchaseTicketCommandDto.Request request) throws Exception {
-        PurchaseTicketCommandDto.Response purchase = purchaseTicketService.purchase(request);
+        PurchaseTicketCommandDto.Response purchase = purchaseTicketService.purchaseWithPessimicticLock(request);
         return ResponseEntity.status(HttpStatus.OK).body(purchase);
     }
 

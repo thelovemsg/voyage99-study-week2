@@ -114,7 +114,7 @@ class TicketControllerTest {
         response.setTicketId(ticketId);
         response.setSuccess(Boolean.TRUE);
 
-        Mockito.when(purchaseTicketService.purchase(any())).thenReturn(response);
+        Mockito.when(purchaseTicketService.purchaseWithPessimicticLock(any())).thenReturn(response);
 
         return mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -150,7 +150,7 @@ class TicketControllerTest {
         response.setTicketId(ticketId);
         response.setSuccess(Boolean.TRUE);
 
-        Mockito.when(purchaseTicketService.purchase(any()))
+        Mockito.when(purchaseTicketService.purchaseWithPessimicticLock(any()))
                 .thenThrow(new ParameterNotValidException(MessageCode.USER_POINT_NOT_ENOUGH));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase")

@@ -1,15 +1,10 @@
 package kr.hhplus.be.server.queue.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.hypersistence.tsid.TSID;
 import kr.hhplus.be.server.common.utils.CryptoUtils;
 import kr.hhplus.be.server.common.utils.IdUtils;
 import kr.hhplus.be.server.queue.controller.dto.QueueCreateCommandDto;
-import kr.hhplus.be.server.queue.controller.dto.TokenValidateCommandDto;
-import kr.hhplus.be.server.queue.domain.QueueEntity;
 import kr.hhplus.be.server.queue.enums.QueueStatus;
-import kr.hhplus.be.server.queue.enums.TokenStatus;
 import kr.hhplus.be.server.queue.repository.QueueRepository;
 import kr.hhplus.be.server.queue.service.QueueService;
 import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
@@ -17,7 +12,6 @@ import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCo
 import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
 import kr.hhplus.be.server.ticket.application.service.ticket.ReserveTicketServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,20 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -160,7 +146,7 @@ class QueueIntegrationTest {
         tickteResponse.setTicketId(ticketId);
         tickteResponse.setSuccess(Boolean.TRUE);
 
-        Mockito.when(purchaseTicketService.purchase(any())).thenReturn(tickteResponse);
+        Mockito.when(purchaseTicketService.purchaseWithPessimicticLock(any())).thenReturn(tickteResponse);
 
         String ticketPurchaseResponse = mockMvc.perform(post("/ticket/purchase")
                         .contentType(MediaType.APPLICATION_JSON)

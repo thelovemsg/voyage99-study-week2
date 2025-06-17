@@ -33,4 +33,15 @@ public interface TicketJpaRepository extends JpaRepository<TicketEntity, Long> {
     int reserveTicketAtomically(@Param("ticketId") Long ticketId,
                                 @Param("userId") Long userId,
                                 @Param("expireTime") LocalDateTime expireTime);
+
+    @Modifying
+    @Query("UPDATE TicketEntity t SET t.ticketStatusEnum = :status, t.userId = :userId, t.purchaseDateTime = :purchaseDateTime " +
+            "WHERE t.ticketId = :ticketId AND t.ticketStatusEnum = 'RESERVED' AND t.userId = :originalUserId")
+    int updateWithOptimisticLock(
+            @Param("ticketId") Long ticketId,
+            @Param("status") TicketStatusEnum status,
+            @Param("userId") Long userId,
+            @Param("originalUserId") Long originalUserId,
+            @Param("purchaseDateTime") LocalDateTime purchaseDateTime
+    );
 }

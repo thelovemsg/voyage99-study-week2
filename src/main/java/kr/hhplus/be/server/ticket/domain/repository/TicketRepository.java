@@ -19,4 +19,5 @@ public interface TicketRepository {
     int reserveTicketAtomically(Long ticketId, Long userId, LocalDateTime expireTime);
     void deleteAll();
     void saveAll(List<TicketEntity> ticketEntities);
+    int updateWithOptimisticLock(Ticket ticket);
 }
