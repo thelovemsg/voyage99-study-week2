@@ -8,8 +8,8 @@ import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketC
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.ReserveTicketCommandDto;
 import kr.hhplus.be.server.ticket.application.ticket.service.CreateTicketServiceImpl;
 import kr.hhplus.be.server.ticket.application.ticket.service.GetTicketServiceImpl;
-import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketPessimisticLockServiceImpl;
-import kr.hhplus.be.server.ticket.application.ticket.service.ReserveTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.redis.PurchaseTicketRedisServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.redis.ReserveTicketRedisServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
-class TicketControllerTest {
+class TicketControllerWithRedisTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,12 +46,12 @@ class TicketControllerTest {
     private CreateTicketServiceImpl createTicketService;
 
     @MockitoBean
-    private PurchaseTicketPessimisticLockServiceImpl purchaseTicketService;
-
-    @MockitoBean
-    private ReserveTicketServiceImpl reserveTicketService;
+    private PurchaseTicketRedisServiceImpl purchaseTicketService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @MockitoBean
+    private ReserveTicketRedisServiceImpl reserveTicketRedisService;
 
     private String tempTicketNo;
 
@@ -92,9 +92,9 @@ class TicketControllerTest {
         ReserveTicketCommandDto.Response response = new ReserveTicketCommandDto.Response();
         response.setTicketId(ticketId);
 
-        Mockito.when(reserveTicketService.reserve(any())).thenReturn(response);
+        Mockito.when(reserveTicketRedisService.reserve(any())).thenReturn(response);
 
-        return mockMvc.perform(MockMvcRequestBuilders.patch("/ticket/reserve")
+        return mockMvc.perform(MockMvcRequestBuilders.patch("/ticket/reserve-redis")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -103,7 +103,20 @@ class TicketControllerTest {
                 .getContentAsString();
     }
 
-    // 구매 메서드 (누락된 부분!)
+    private void reserveTicketShouldFail(Long ticketId, Long userId) throws Exception {
+        ReserveTicketCommandDto.Request request = new ReserveTicketCommandDto.Request();
+        request.setTicketId(ticketId);
+        request.setUserId(userId);
+
+        Mockito.when(reserveTicketRedisService.reserve(any()))
+                .thenThrow(new ParameterNotValidException(MessageCode.TICKET_ALREADY_RESERVED_ERROR));
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/ticket/reserve-redis")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
     private String purchaseTicket(Long ticketId, Long userId) throws Exception {
         PurchaseTicketCommandDto.Request request = new PurchaseTicketCommandDto.Request();
         request.setTicketId(ticketId);
@@ -114,30 +127,15 @@ class TicketControllerTest {
         response.setTicketId(ticketId);
         response.setSuccess(Boolean.TRUE);
 
-        Mockito.when(purchaseTicketService.purchaseWithPessimisticLock(any())).thenReturn(response);
+        Mockito.when(purchaseTicketService.purchase(any())).thenReturn(response);
 
-        return mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase")
+        return mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase-redis")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-    }
-
-
-    private void reserveTicketShouldFail(Long ticketId, Long userId) throws Exception {
-        ReserveTicketCommandDto.Request request = new ReserveTicketCommandDto.Request();
-        request.setTicketId(ticketId);
-        request.setUserId(userId);
-
-        Mockito.when(reserveTicketService.reserve(any()))
-                .thenThrow(new ParameterNotValidException(MessageCode.TICKET_ALREADY_RESERVED_ERROR));
-
-        mockMvc.perform(MockMvcRequestBuilders.patch("/ticket/reserve")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     private void purchaseTicketFail(Long ticketId, Long userId) throws Exception {
@@ -150,10 +148,10 @@ class TicketControllerTest {
         response.setTicketId(ticketId);
         response.setSuccess(Boolean.TRUE);
 
-        Mockito.when(purchaseTicketService.purchaseWithPessimisticLock(any()))
+        Mockito.when(purchaseTicketService.purchase(any()))
                 .thenThrow(new ParameterNotValidException(MessageCode.USER_POINT_NOT_ENOUGH));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase")
+        mockMvc.perform(MockMvcRequestBuilders.post("/ticket/purchase-redis")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -162,7 +160,7 @@ class TicketControllerTest {
 
     @Test
     @DisplayName("단순 티켓 생성 테스트")
-    void purchaseTicketTest() throws Exception {
+    void createTicketTest() throws Exception {
         // Given
         Long concertScheduleId = IdUtils.getNewId();
         Long seatId = IdUtils.getNewId();
@@ -180,10 +178,9 @@ class TicketControllerTest {
      * 시나리오 - 심플 버전
      * 1. 티켓 정보를 생성
      * 2. 사용자가 생성한 티켓을 예약한다.
-     * 3. 사용자가 다시 구매를 시도하면 성공!
      */
     @Test
-    @DisplayName("티켓 생성 -> 예약 처리 -> 구매 테스트 : 유저 1명")
+    @DisplayName("티켓 생성 -> 예약 처리")
     void create_reserve_purchase_test() throws Exception {
         // Given
         Long userAId = IdUtils.getNewId();

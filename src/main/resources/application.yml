@@ -22,16 +22,17 @@ spring:
 
   data:
     redis:
-      redisson:
-        config: |
-          singleServerConfig:
-            address: "redis://localhost:6379"
-            connectionPoolSize: 10
-            connectionMinimumIdleSize: 5
-            connectTimeout: 3000
-            timeout: 3000
-            retryAttempts: 3
-            retryInterval: 1500
+      port: 6379
+      host: localhost
+      config:
+        singleServerConfig:
+          address: "redis://localhost:6379"
+          connectionPoolSize: 10
+          connectionMinimumIdleSize: 5
+          connectTimeout: 3000
+          timeout: 3000
+          retryAttempts: 3
+          retryInterval: 1500
 ---
 spring.config.activate.on-profile: local, test
 

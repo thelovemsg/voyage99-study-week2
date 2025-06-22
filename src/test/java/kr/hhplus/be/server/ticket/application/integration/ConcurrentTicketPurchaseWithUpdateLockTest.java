@@ -1,8 +1,10 @@
 package kr.hhplus.be.server.ticket.application.integration;
 
 import kr.hhplus.be.server.common.utils.IdUtils;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.PurchaseTicketPessimisticLockUseCase;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketPessimisticLockServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.redis.PurchaseTicketRedisServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;
@@ -44,7 +46,7 @@ public class ConcurrentTicketPurchaseWithUpdateLockTest {
     private TicketDomainService ticketDomainService;
 
     @InjectMocks
-    private PurchaseTicketServiceImpl purchaseTicketService;
+    private PurchaseTicketPessimisticLockUseCase purchaseTicketService;
 
     private List<Ticket> testTickets;
     private List<UserEntity> users;
@@ -177,7 +179,7 @@ public class ConcurrentTicketPurchaseWithUpdateLockTest {
             executor.submit(() -> {
                 try {
                     PurchaseTicketCommandDto.Request request = createPurchaseRequest(ticket.getTicketId(), user.getUserId());
-                    purchaseTicketService.purchaseWithPessimicticLock(request);
+                    purchaseTicketService.purchaseWithPessimisticLock(request);
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failureCount.incrementAndGet();

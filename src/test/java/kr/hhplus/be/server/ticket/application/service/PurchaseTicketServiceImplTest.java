@@ -6,7 +6,7 @@ import kr.hhplus.be.server.common.exceptions.ReservationNotValidException;
 import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.common.utils.IdUtils;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketPessimisticLockServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.repository.TicketRepository;
@@ -40,7 +40,7 @@ class PurchaseTicketServiceImplTest {
     private TicketRepository ticketRepository;
 
     @InjectMocks
-    private PurchaseTicketServiceImpl purchaseTicketService;
+    private PurchaseTicketPessimisticLockServiceImpl purchaseTicketPessimisticLockService;
 
     // 공통 테스트 데이터
     private Long userId;
@@ -100,7 +100,7 @@ class PurchaseTicketServiceImplTest {
         doNothing().when(ticketDomainService).useUserPoint(mockUser, useAmount);
 
         // When
-        PurchaseTicketCommandDto.Response response = purchaseTicketService.purchaseWithPessimicticLock(request);
+        PurchaseTicketCommandDto.Response response = purchaseTicketPessimisticLockService.purchaseWithPessimisticLock(request);
 
         // Then
         assertThat(response).isNotNull();
@@ -123,7 +123,7 @@ class PurchaseTicketServiceImplTest {
         when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> purchaseTicketService.purchaseWithPessimicticLock(request))
+        assertThatThrownBy(() -> purchaseTicketPessimisticLockService.purchaseWithPessimisticLock(request))
                 .isInstanceOf(NotFoundException.class);
 
         verify(ticketRepository).findByIdWithLock(ticketId);
@@ -139,7 +139,7 @@ class PurchaseTicketServiceImplTest {
                 .thenThrow(new ParameterNotValidException(MessageCode.USER_POINT_NOT_ENOUGH));
 
         // When & Then
-        assertThatThrownBy(() -> purchaseTicketService.purchaseWithPessimicticLock(request))
+        assertThatThrownBy(() -> purchaseTicketPessimisticLockService.purchaseWithPessimisticLock(request))
                 .isInstanceOf(ParameterNotValidException.class);
 
         verify(ticketRepository).findByIdWithLock(ticketId);
@@ -158,7 +158,7 @@ class PurchaseTicketServiceImplTest {
                 .when(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
 
         // When & Then
-        assertThatThrownBy(() -> purchaseTicketService.purchaseWithPessimicticLock(request))
+        assertThatThrownBy(() -> purchaseTicketPessimisticLockService.purchaseWithPessimisticLock(request))
                 .isInstanceOf(ReservationNotValidException.class);
 
         verify(ticketDomainService).validateUserHasEnoughPoint(userId, useAmount);
@@ -178,7 +178,7 @@ class PurchaseTicketServiceImplTest {
                 .when(ticketDomainService).validateTicketCanBeReserved(mockTicket, userId);
 
         // When & Then
-        assertThatThrownBy(() -> purchaseTicketService.purchaseWithPessimicticLock(request))
+        assertThatThrownBy(() -> purchaseTicketPessimisticLockService.purchaseWithPessimisticLock(request))
                 .isInstanceOf(ParameterNotValidException.class);
 
         verify(ticketDomainService).validateUserHasEnoughPoint(userId, useAmount);
@@ -200,7 +200,7 @@ class PurchaseTicketServiceImplTest {
                 .when(ticketDomainService).useUserPoint(mockUser, useAmount);
 
         // When & Then
-        assertThatThrownBy(() -> purchaseTicketService.purchaseWithPessimicticLock(request))
+        assertThatThrownBy(() -> purchaseTicketPessimisticLockService.purchaseWithPessimisticLock(request))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("포인트 사용 실패");
 

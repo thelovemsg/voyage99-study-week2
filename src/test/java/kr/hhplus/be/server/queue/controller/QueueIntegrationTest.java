@@ -9,7 +9,8 @@ import kr.hhplus.be.server.queue.repository.QueueRepository;
 import kr.hhplus.be.server.queue.service.QueueService;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.ReserveTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketPessimisticLockServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.redis.PurchaseTicketRedisServiceImpl;
 import kr.hhplus.be.server.ticket.application.ticket.service.ReserveTicketServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,7 @@ class QueueIntegrationTest {
     private ReserveTicketServiceImpl reserveTicketService;
 
     @MockitoBean
-    private PurchaseTicketServiceImpl purchaseTicketService;
+    private PurchaseTicketPessimisticLockServiceImpl purchaseTicketService;
 
     @Autowired
     private CryptoUtils cryptoUtils;
@@ -146,7 +147,7 @@ class QueueIntegrationTest {
         tickteResponse.setTicketId(ticketId);
         tickteResponse.setSuccess(Boolean.TRUE);
 
-        Mockito.when(purchaseTicketService.purchaseWithPessimicticLock(any())).thenReturn(tickteResponse);
+        Mockito.when(purchaseTicketService.purchaseWithPessimisticLock(any())).thenReturn(tickteResponse);
 
         String ticketPurchaseResponse = mockMvc.perform(post("/ticket/purchase")
                         .contentType(MediaType.APPLICATION_JSON)
