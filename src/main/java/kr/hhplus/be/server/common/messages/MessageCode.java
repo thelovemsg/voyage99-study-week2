@@ -21,7 +21,7 @@ public enum MessageCode {
 
     //티켓
     TICKET_NOT_FOUND("티켓 정보가 존재하지 않습니다. [id: {0}]"),
-    TICKET_ALREADY_OCCUPIED("티켓이 이미 예약되어 있습니다. [id: {0}]"),
+    TICKET_ALREADY_RESERVED_ERROR("티켓이 이미 예약되어 있습니다. [id: {0}]"),
     TICKET_PURCHASE_ERROR("티켓 구매중 에러가 발생했습니다. [id: {0}]"),
     TICKET_RESERVATION_NOT_AVAILABLE("티켓 예약이 불가능합니다."),
 

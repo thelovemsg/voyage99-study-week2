@@ -35,6 +35,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
+	// Redisson 추가
+	implementation("org.redisson:redisson-spring-boot-starter:3.35.0")
+
 	//tsid
 	implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.7.3")
 

@@ -1,7 +1,7 @@
-package kr.hhplus.be.server.ticket.application.service.ticket;
+package kr.hhplus.be.server.ticket.application.ticket.service;
 
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.GetTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.GetUserTicketListUseCase;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.GetTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.GetUserTicketListUseCase;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

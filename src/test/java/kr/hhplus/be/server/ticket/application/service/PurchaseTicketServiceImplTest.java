@@ -5,8 +5,8 @@ import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
 import kr.hhplus.be.server.common.exceptions.ReservationNotValidException;
 import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.repository.TicketRepository;
@@ -174,7 +174,7 @@ class PurchaseTicketServiceImplTest {
         when(ticketRepository.findByIdWithLock(ticketId)).thenReturn(Optional.of(mockTicket));
         when(ticketDomainService.validateUserHasEnoughPoint(userId, useAmount)).thenReturn(mockUser);
         doNothing().when(ticketDomainService).validateConcertScheduleAvailable(concertScheduleId);
-        doThrow(new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED))
+        doThrow(new ParameterNotValidException(MessageCode.TICKET_ALREADY_RESERVED_ERROR))
                 .when(ticketDomainService).validateTicketCanBeReserved(mockTicket, userId);
 
         // When & Then

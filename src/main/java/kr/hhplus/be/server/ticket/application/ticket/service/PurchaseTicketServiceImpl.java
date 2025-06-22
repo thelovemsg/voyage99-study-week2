@@ -1,11 +1,11 @@
-package kr.hhplus.be.server.ticket.application.service.ticket;
+package kr.hhplus.be.server.ticket.application.ticket.service;
 
 import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.exceptions.TicketPurchaseException;
 import kr.hhplus.be.server.common.messages.MessageCode;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.PurchaseTicketUseCase;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.PurchaseTicketUseCase;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;
 import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryImpl;

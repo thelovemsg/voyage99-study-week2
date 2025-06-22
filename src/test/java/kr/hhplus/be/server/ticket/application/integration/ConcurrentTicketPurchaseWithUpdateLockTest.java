@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.ticket.application.integration;
 
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;

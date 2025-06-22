@@ -21,7 +21,7 @@ public class TicketDomainService {
 
     public void validateTicketCanBeReserved(Ticket ticket, Long userId) {
         if (ticket.isReservedByOther(userId) && !ticket.isReservationExpired() || !ticket.getUserId().equals(userId)) {
-            throw new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED);
+            throw new ParameterNotValidException(MessageCode.TICKET_ALREADY_RESERVED_ERROR);
         }
     }
 

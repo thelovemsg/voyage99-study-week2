@@ -1,8 +1,8 @@
-package kr.hhplus.be.server.ticket.application.service.ticket;
+package kr.hhplus.be.server.ticket.application.ticket.service;
 
 import jakarta.transaction.Transactional;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.CreateTicketUseCase;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.CreateTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.CreateTicketUseCase;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.CreateTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.port.ConcertScheduleValidationPort;
 import kr.hhplus.be.server.ticket.domain.port.GenerateTicketNoPort;

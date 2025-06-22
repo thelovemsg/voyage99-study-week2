@@ -1,16 +1,19 @@
-package kr.hhplus.be.server.ticket.application.service.ticket;
+package kr.hhplus.be.server.ticket.application.ticket.service;
 
 import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
+import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
 import kr.hhplus.be.server.common.messages.MessageCode;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.ReserveTicketUseCase;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.ReserveTicketUseCase;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.ReserveTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service("reserveTicketService")
 @RequiredArgsConstructor

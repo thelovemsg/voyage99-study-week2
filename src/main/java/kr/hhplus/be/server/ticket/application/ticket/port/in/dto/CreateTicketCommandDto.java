@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.application.port.ticket.in.dto;
+package kr.hhplus.be.server.ticket.application.ticket.port.in.dto;
 
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import lombok.*;

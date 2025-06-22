@@ -38,7 +38,7 @@ public class Ticket {
         }
 
         if (!isReservationExpired() && isReservedByOther(userId)) {
-            throw new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED);
+            throw new ParameterNotValidException(MessageCode.TICKET_ALREADY_RESERVED_ERROR);
         }
 
         this.reservedBy = userId;

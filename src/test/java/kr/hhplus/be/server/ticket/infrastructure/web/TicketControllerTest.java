@@ -3,13 +3,13 @@ package kr.hhplus.be.server.ticket.infrastructure.web;
 import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
 import kr.hhplus.be.server.common.messages.MessageCode;
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.CreateTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.PurchaseTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.port.ticket.in.dto.ReserveTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.service.ticket.CreateTicketServiceImpl;
-import kr.hhplus.be.server.ticket.application.service.ticket.GetTicketServiceImpl;
-import kr.hhplus.be.server.ticket.application.service.ticket.PurchaseTicketServiceImpl;
-import kr.hhplus.be.server.ticket.application.service.ticket.ReserveTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.CreateTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.ReserveTicketCommandDto;
+import kr.hhplus.be.server.ticket.application.ticket.service.CreateTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.GetTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.ReserveTicketServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -132,7 +132,7 @@ class TicketControllerTest {
         request.setUserId(userId);
 
         Mockito.when(reserveTicketService.reserve(any()))
-                .thenThrow(new ParameterNotValidException(MessageCode.TICKET_ALREADY_OCCUPIED));
+                .thenThrow(new ParameterNotValidException(MessageCode.TICKET_ALREADY_RESERVED_ERROR));
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/ticket/reserve")
                         .contentType(MediaType.APPLICATION_JSON)
