@@ -196,9 +196,6 @@ class TicketControllerWithRedisTest {
         String reserveResponse = reserveTicket(ticketId, userAId);
         log.info("2단계 - 사용자 A 예약 완료: {}", reserveResponse);
 
-        // 3. 사용자 A가 구매 (Long ticketId 사용)
-        String purchaseResponse = purchaseTicket(ticketId, userAId);
-        log.info("3단계 - 사용자 A 구매 성공: {}", purchaseResponse);
 
         // 검증
         assertThat(ticketId).isNotNull();

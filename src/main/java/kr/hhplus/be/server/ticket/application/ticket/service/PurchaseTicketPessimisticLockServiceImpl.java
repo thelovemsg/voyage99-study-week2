@@ -24,7 +24,7 @@ public class PurchaseTicketPessimisticLockServiceImpl implements PurchaseTicketP
 
     @Override
     @Transactional
-    public PurchaseTicketCommandDto.Response purchaseWithPessimisticLock(PurchaseTicketCommandDto.Request request) throws Exception {
+    public PurchaseTicketCommandDto.Response purchaseWithPessimisticLock(PurchaseTicketCommandDto.Request request) {
         Long userId = request.getUserId();
         Long concertScheduleId = request.getConcertScheduleId();
         Long ticketId = request.getTicketId();

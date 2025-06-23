@@ -29,7 +29,7 @@ public class PurchaseTicketRedisServiceImpl implements PurchaseTicketRedisUseCas
     private final TicketRepository ticketRepository;
 
     @Override
-    public PurchaseTicketCommandDto.Response purchase(PurchaseTicketCommandDto.Request request) throws Exception {
+    public PurchaseTicketCommandDto.Response purchase(PurchaseTicketCommandDto.Request request) {
         Long userId = request.getUserId();
         Long concertScheduleId = request.getConcertScheduleId();
         Long ticketId = request.getTicketId();
