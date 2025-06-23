@@ -106,6 +106,12 @@ class ConcurrentTicketReservationTest {
 
         latch.await();
         executor.shutdown();
+if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+    executor.shutdownNow();
+    if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+        System.err.println("ExecutorService가 강제 종료되지 않았습니다.");
+    }
+}
 
         // then
         System.out.println("성공: " + successCount.get() + ", 실패: " + failureCount.get());

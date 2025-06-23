@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.ticket.application.ticket.service.redis;
 
+import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.exceptions.TicketPurchaseException;
 import kr.hhplus.be.server.common.messages.MessageCode;
@@ -29,6 +30,7 @@ public class PurchaseTicketRedisServiceImpl implements PurchaseTicketRedisUseCas
     private final TicketRepository ticketRepository;
 
     @Override
+    @Transactional
     public PurchaseTicketCommandDto.Response purchase(PurchaseTicketCommandDto.Request request) {
         Long userId = request.getUserId();
         Long concertScheduleId = request.getConcertScheduleId();
@@ -52,12 +54,6 @@ public class PurchaseTicketRedisServiceImpl implements PurchaseTicketRedisUseCas
 
                     // 4. 낙관적 업데이트 시도 (여기서 동시성 제어)
                     ticket.completePurchase(userId); // 상태를 PAID로 변경
-                    int updatedRows = ticketRepository.updateWithOptimisticLock(ticket);
-
-                    // 5. 업데이트 실패 시 예외 발생 (다른 사용자가 먼저 구매)
-                    if (updatedRows == 0) {
-                        throw new TicketPurchaseException(MessageCode.TICKET_PURCHASE_ERROR, ticketId);
-                    }
 
                     return PurchaseTicketCommandDto.Response.builder()
                             .ticketId(ticketId)

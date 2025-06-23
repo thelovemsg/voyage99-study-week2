@@ -1,22 +1,27 @@
 package kr.hhplus.be.server.ticket.application.integration;
 
+
 import kr.hhplus.be.server.common.utils.IdUtils;
+import kr.hhplus.be.server.redis.service.DistributedLockTemplate;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketPessimisticLockServiceImpl;
+import kr.hhplus.be.server.ticket.application.ticket.service.redis.PurchaseTicketRedisServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
 import kr.hhplus.be.server.ticket.domain.service.TicketDomainService;
 import kr.hhplus.be.server.ticket.infrastructure.persistence.ticket.TicketRepositoryImpl;
 import kr.hhplus.be.server.user.domain.UserEntity;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,23 +33,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-@DisplayName("동시성 티켓 구매 테스트")
-class ConcurrentTicketPurchaseAmountLimitTest {
+@SpringBootTest
+@DisplayName("동시성 티켓 예약 테스트")
+class ConcurrentTicketPurchaseRedisTest {
 
-    @Mock
+    @MockitoBean
     private TicketRepositoryImpl ticketRepository;
 
-    @Mock
+    @MockitoBean
     private TicketDomainService ticketDomainService;
 
-    @InjectMocks
-    private PurchaseTicketPessimisticLockServiceImpl purchaseTicketService;
+    @Autowired
+    private PurchaseTicketRedisServiceImpl purchaseTicketService;
 
     private List<Ticket> tickets;
     private List<UserEntity> users;
@@ -98,7 +102,7 @@ class ConcurrentTicketPurchaseAmountLimitTest {
     }
 
     @Test
-    @DisplayName("단순 동시성 테스트 - 디버깅용")
+    @DisplayName("단순 동시성 테스트 - 티켓 하나, 구매자 둘")
     void simple_concurrent_test() throws InterruptedException {
         // given - 1개 티켓만으로 테스트
         Ticket singleTicket = tickets.get(0);
@@ -106,8 +110,9 @@ class ConcurrentTicketPurchaseAmountLimitTest {
         singleTicket.reserve(users.get(0).getUserId()); // 첫 번째 사용자로 예약
 
         // Repository Mock 설정
-        when(ticketRepository.findByIdWithLock(singleTicket.getTicketId()))
+        when(ticketRepository.findById(singleTicket.getTicketId()))
                 .thenReturn(Optional.of(singleTicket));
+
         when(ticketRepository.save(any(Ticket.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0)); // 수정된 부분
 
@@ -132,7 +137,7 @@ class ConcurrentTicketPurchaseAmountLimitTest {
             executor.submit(() -> {
                 try {
                     PurchaseTicketCommandDto.Request request = createPurchaseRequest(singleTicket.getTicketId(), userId);
-                    purchaseTicketService.purchaseWithPessimisticLock(request);
+                    purchaseTicketService.purchase(request);
                     successCount.incrementAndGet();
                     System.out.println("사용자 " + userId + " 예약 성공");
                 } catch (Exception e) {
@@ -155,8 +160,8 @@ class ConcurrentTicketPurchaseAmountLimitTest {
 
         // then
         System.out.println("성공: " + successCount.get() + ", 실패: " + failureCount.get());
-        assertThat(successCount.get()).isEqualTo(1); // 1명만 성공해야 함
-        assertThat(failureCount.get()).isEqualTo(1); // 1명은 실패해야 함
+        AssertionsForClassTypes.assertThat(successCount.get()).isEqualTo(1); // 1명만 성공해야 함
+        AssertionsForClassTypes.assertThat(failureCount.get()).isEqualTo(1); // 1명은 실패해야 함
 
         System.out.println("userEntity = " + users.get(0));
         System.out.println("userEntity = " + users.get(1));
@@ -169,7 +174,7 @@ class ConcurrentTicketPurchaseAmountLimitTest {
 
         // Repository Mock 설정
         for (Ticket ticket : tickets) {
-            when(ticketRepository.findByIdWithLock(ticket.getTicketId()))
+            when(ticketRepository.findById(ticket.getTicketId()))
                     .thenReturn(Optional.of(ticket));
         }
         when(ticketRepository.save(any(Ticket.class)))
@@ -196,7 +201,7 @@ class ConcurrentTicketPurchaseAmountLimitTest {
             executor.submit(() -> {
                 try {
                     PurchaseTicketCommandDto.Request request = createPurchaseRequest(ticket.getTicketId(), userId);
-                    purchaseTicketService.purchaseWithPessimisticLock(request);
+                    purchaseTicketService.purchase(request);
                     successCount.incrementAndGet();
                     System.out.println("사용자 " + userId + " 예약 성공");
                 } catch (Exception e) {
@@ -248,7 +253,7 @@ class ConcurrentTicketPurchaseAmountLimitTest {
             executor.submit(() -> {
                 try {
                     PurchaseTicketCommandDto.Request request = createPurchaseRequest(ticket.getTicketId(), userId);
-                    purchaseTicketService.purchaseWithPessimisticLock(request);
+                    purchaseTicketService.purchase(request);
                     successCount.incrementAndGet();
                     System.out.println("사용자 " + userId + " 티켓 " + index + " 구매 성공");
                 } catch (Exception e) {
@@ -275,8 +280,8 @@ class ConcurrentTicketPurchaseAmountLimitTest {
         System.out.println("User2 남은 포인트: " + users.get(1).getPointAmount());
 
         // 각 사용자는 5개씩 (100000원 ÷ 20000원), 총 10개 성공
-        assertThat(successCount.get()).isEqualTo(10);
-        assertThat(failureCount.get()).isEqualTo(40);
+        AssertionsForClassTypes.assertThat(successCount.get()).isEqualTo(10);
+        AssertionsForClassTypes.assertThat(failureCount.get()).isEqualTo(40);
     }
 
     private void setupTicketsAndUsers() {
@@ -306,7 +311,7 @@ class ConcurrentTicketPurchaseAmountLimitTest {
     private void setupMockSettings() {
         // Repository Mock 설정
         for (Ticket ticket : tickets) {
-            when(ticketRepository.findByIdWithLock(ticket.getTicketId()))
+            when(ticketRepository.findById(ticket.getTicketId()))
                     .thenReturn(Optional.of(ticket));
         }
         when(ticketRepository.save(any(Ticket.class)))

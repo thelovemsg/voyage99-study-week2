@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.ticket.infrastructure.web;
+package kr.hhplus.be.server.ticket.application.integration;
 
 
 import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
@@ -20,10 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,6 +116,12 @@ class ConcurrentTicketReservationRedisTest {
 
         latch.await();
         executor.shutdown();
+        if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+            executor.shutdownNow();
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                System.err.println("ExecutorService가 강제 종료되지 않았습니다.");
+            }
+        }
 
         // then - 분산 락이 정상 동작하면 1명만 성공해야 함
         System.out.println("성공: " + successCount.get() + ", 실패: " + failureCount.get());

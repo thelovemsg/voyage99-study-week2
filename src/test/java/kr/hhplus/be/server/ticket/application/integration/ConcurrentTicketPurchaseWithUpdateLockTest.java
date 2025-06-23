@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("Pessimistic vs Optimistic Lock 성능 비교 테스트")
-public class ConcurrentTicketPurchaseWithUpdateLockTest {
+class ConcurrentTicketPurchaseWithUpdateLockTest {
 
     @Mock
     private TicketRepositoryImpl ticketRepository;
@@ -191,6 +192,12 @@ public class ConcurrentTicketPurchaseWithUpdateLockTest {
 
         latch.await();
         executor.shutdown();
+        if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+            executor.shutdownNow();
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                System.err.println("ExecutorService가 강제 종료되지 않았습니다.");
+            }
+        }
 
         return new PerformanceResult(successCount.get(), failureCount.get());
     }
@@ -299,7 +306,7 @@ public class ConcurrentTicketPurchaseWithUpdateLockTest {
             if (speedRatio > 1.1) {
                 System.out.println("  - Optimistic Lock이 " + String.format("%.1f", speedRatio) + "배 빠름");
             } else {
-                System.out.println("  - Pessimistic Lock이 " + String.format("%.1f", 1/speedRatio) + "배 빠름");
+                System.out.println("  - Pessimistic Lock이 " + String.format("%.1f", 1 / speedRatio) + "배 빠름");
             }
         }
 

@@ -217,6 +217,12 @@ public class ReservationPerformanceComparisonTest {
         long overallEndTime = System.currentTimeMillis();
 
         executor.shutdown();
+if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+    executor.shutdownNow();
+    if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+        System.err.println("ExecutorService가 강제 종료되지 않았습니다.");
+    }
+}
 
         // 결과 반환
         return new PerformanceResult(
