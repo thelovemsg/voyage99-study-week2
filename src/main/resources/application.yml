@@ -19,20 +19,16 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
-
   data:
     redis:
       port: 6379
       host: localhost
-      config:
-        singleServerConfig:
-          address: "redis://localhost:6379"
-          connectionPoolSize: 10
-          connectionMinimumIdleSize: 5
-          connectTimeout: 3000
-          timeout: 3000
-          retryAttempts: 3
-          retryInterval: 1500
+      timeout: 2000ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000  # 10분 (밀리초)
+      cache-null-values: false
 ---
 spring.config.activate.on-profile: local, test
 

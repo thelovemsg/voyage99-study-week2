@@ -3,8 +3,8 @@ package kr.hhplus.be.server.ticket.application.ticket.service.redis;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.exceptions.ParameterNotValidException;
 import kr.hhplus.be.server.common.messages.MessageCode;
-import kr.hhplus.be.server.redis.service.DistributedLockTemplate;
-import kr.hhplus.be.server.redis.utils.RedisKeyUtils;
+import kr.hhplus.be.server.common.redis.RedisDistributedLockTemplate;
+import kr.hhplus.be.server.common.redis.RedisKeyUtils;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.ReserveTicketUseCase;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.ReserveTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReserveTicketRedisServiceImpl implements ReserveTicketUseCase {
 
-    private final DistributedLockTemplate lockTemplate;
+    private final RedisDistributedLockTemplate lockTemplate;
     private final TicketRepository ticketRepository;
 
     @Override

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.redis.service;
+package kr.hhplus.be.server.common.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 @Component
 @RequiredArgsConstructor
-public class DistributedLockTemplate {
+public class RedisDistributedLockTemplate {
 
     private final RedissonClient redissonClient;
 

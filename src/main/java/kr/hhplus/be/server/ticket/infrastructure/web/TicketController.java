@@ -18,16 +18,22 @@ import org.springframework.web.bind.annotation.*;
 public class TicketController {
 
     private final GetTicketServiceImpl getTicketService;
+    private final GetTicketCacheServiceImpl ticketCacheService;
     private final CreateTicketServiceImpl createTicketService;
     private final PurchaseTicketPessimisticLockServiceImpl purchaseTicketPessimisticLockService;
-    private final PurchaseTicketRedisServiceImpl purchaseTicketService;
-    private final kr.hhplus.be.server.ticket.application.ticket.service.redis.PurchaseTicketRedisServiceImpl purchaseTicketRedisService;
+    private final PurchaseTicketRedisServiceImpl purchaseTicketRedisService;
     private final ReserveTicketServiceImpl reserveTicketService;
     private final ReserveTicketRedisServiceImpl reserveTicketRedisService;
 
     @GetMapping("/{ticketId}")
     public ResponseEntity<GetTicketCommandDto.Response> getTicket(@PathVariable("ticketId") Long ticketId) {
         GetTicketCommandDto.Response ticketResponse = getTicketService.getTicket(ticketId);
+        return ResponseEntity.status(HttpStatus.OK).body(ticketResponse);
+    }
+
+    @GetMapping("/{ticketId}/cache")
+    public ResponseEntity<GetTicketCommandDto.Response> getTicketCache(@PathVariable("ticketId") Long ticketId) {
+        GetTicketCommandDto.Response ticketResponse = ticketCacheService.getTicket(ticketId);
         return ResponseEntity.status(HttpStatus.OK).body(ticketResponse);
     }
 
@@ -38,13 +44,13 @@ public class TicketController {
     }
 
     @PostMapping("/purchase")
-    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(@RequestBody PurchaseTicketCommandDto.Request request) throws Exception {
-        PurchaseTicketCommandDto.Response purchase = purchaseTicketService.purchase(request);
+    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicket(@RequestBody PurchaseTicketCommandDto.Request request) {
+        PurchaseTicketCommandDto.Response purchase = purchaseTicketPessimisticLockService.purchaseWithPessimisticLock(request);
         return ResponseEntity.status(HttpStatus.OK).body(purchase);
     }
 
     @PostMapping("/purchase-redis")
-    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicketRedis(@RequestBody PurchaseTicketCommandDto.Request request) throws Exception {
+    public ResponseEntity<PurchaseTicketCommandDto.Response> purchaseTicketRedis(@RequestBody PurchaseTicketCommandDto.Request request) {
         PurchaseTicketCommandDto.Response purchase = purchaseTicketRedisService.purchase(request);
         return ResponseEntity.status(HttpStatus.OK).body(purchase);
     }

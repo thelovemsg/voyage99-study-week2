@@ -2,9 +2,7 @@ package kr.hhplus.be.server.ticket.application.integration;
 
 
 import kr.hhplus.be.server.common.utils.IdUtils;
-import kr.hhplus.be.server.redis.service.DistributedLockTemplate;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
-import kr.hhplus.be.server.ticket.application.ticket.service.PurchaseTicketPessimisticLockServiceImpl;
 import kr.hhplus.be.server.ticket.application.ticket.service.redis.PurchaseTicketRedisServiceImpl;
 import kr.hhplus.be.server.ticket.domain.enums.TicketStatusEnum;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
@@ -16,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

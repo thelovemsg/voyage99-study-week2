@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.redis.utils;
+package kr.hhplus.be.server.common.redis;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

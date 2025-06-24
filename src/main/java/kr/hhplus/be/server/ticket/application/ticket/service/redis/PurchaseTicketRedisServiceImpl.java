@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.common.exceptions.NotFoundException;
 import kr.hhplus.be.server.common.exceptions.TicketPurchaseException;
 import kr.hhplus.be.server.common.messages.MessageCode;
-import kr.hhplus.be.server.redis.service.DistributedLockTemplate;
-import kr.hhplus.be.server.redis.utils.RedisKeyUtils;
+import kr.hhplus.be.server.common.redis.RedisDistributedLockTemplate;
+import kr.hhplus.be.server.common.redis.RedisKeyUtils;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.PurchaseTicketRedisUseCase;
 import kr.hhplus.be.server.ticket.application.ticket.port.in.dto.PurchaseTicketCommandDto;
 import kr.hhplus.be.server.ticket.domain.model.Ticket;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PurchaseTicketRedisServiceImpl implements PurchaseTicketRedisUseCase {
 
-    private final DistributedLockTemplate lockTemplate;
+    private final RedisDistributedLockTemplate lockTemplate;
     private final TicketDomainService ticketDomainService;
     private final TicketRepository ticketRepository;
 
