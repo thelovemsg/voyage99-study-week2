@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
-class TicketControllerRedisTest {
+class TicketControllerWithRedisCacheTest {
 
     private final int TICKET_COUNT = 50;
     private List<Ticket> tickets;
