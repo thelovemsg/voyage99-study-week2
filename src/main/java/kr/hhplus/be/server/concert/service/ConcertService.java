@@ -41,4 +41,5 @@ public class ConcertService {
         ConcertEntity concertEntity = repository.findById(concertId).orElseThrow(() -> new NotFoundException(MessageCode.CONCERT_NOT_FOUND, concertId));
         repository.delete(concertEntity);
     }
+
 }

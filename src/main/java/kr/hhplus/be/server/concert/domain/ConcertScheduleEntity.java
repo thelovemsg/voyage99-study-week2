@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -47,6 +48,9 @@ public class ConcertScheduleEntity extends BaseEntity {
     @Column(name = "schedule_status")
     private CommonStatusEnum scheduleStatus;
 
+    @Column(name = "sold_out_dttm")
+    private LocalDateTime soldOutDatetime;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concert_id", referencedColumnName = "concert_id", insertable = false, updatable = false
                     , foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -61,4 +65,8 @@ public class ConcertScheduleEntity extends BaseEntity {
         return this.scheduleStatus == CommonStatusEnum.ON_SELLING;
     }
 
+    public void soldOutTicket() {
+        this.scheduleStatus = CommonStatusEnum.SOLD_OUT;
+        this.soldOutDatetime = LocalDateTime.now();
+    }
 }

@@ -2,13 +2,16 @@ package kr.hhplus.be.server.common.redis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -18,12 +21,14 @@ public class RedisCacheTemplate {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
+    private final StringRedisTemplate stringRedisTemplate;
 
     public RedisCacheTemplate(
             @Qualifier("cacheRedisTemplate") RedisTemplate<String, Object> redisTemplate,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper, StringRedisTemplate stringRedisTemplate) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**
@@ -142,5 +147,64 @@ public class RedisCacheTemplate {
 
     public void set(String key, Object value) {
         set(key, value, Duration.ofMinutes(10));
+    }
+
+    // ZSet 관련 메서드 추가
+    public void addToSortedSetForRanking(String key, String member, double score) {
+        try {
+            redisTemplate.opsForZSet().add(key, member, score);
+
+            // 자정까지 TTL 설정
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime nextMidnight = now.toLocalDate().plusDays(1).atStartOfDay();
+            Duration ttl = Duration.between(now, nextMidnight);
+            redisTemplate.expire(key, ttl.toMillis(), TimeUnit.MILLISECONDS);
+
+            log.debug("Added to sorted set - key: {}, member: {}, score: {}", key, member, score);
+        } catch (Exception e) {
+            log.error("Failed to add to sorted set for key: {}", key, e);
+        }
+    }
+
+    public Set<String> getReverseRangeFromSortedSet(String key, long start, long end) {
+        try {
+            return stringRedisTemplate.opsForZSet().reverseRange(key, start, end);
+        } catch (Exception e) {
+            log.error("Failed to get reverse range from sorted set for key: {}", key, e);
+            return Collections.emptySet();
+        }
+    }
+
+    public Long getReverseRankFromSortedSet(String key, String member) {
+        try {
+            return redisTemplate.opsForZSet().reverseRank(key, member);
+        } catch (Exception e) {
+            log.error("Failed to get reverse rank from sorted set for key: {}", key, e);
+            return null;
+        }
+    }
+
+    // 원자적 감소 연산 추가
+    public Long decrement(String key) {
+        try {
+            if (!redisTemplate.hasKey(key)) {
+                log.error("Redis key not found: {} - 배치 초기화 확인 필요", key);
+                return null;
+            }
+
+            return redisTemplate.opsForValue().decrement(key);
+        } catch (Exception e) {
+            log.error("Failed to decrement for key: {}", key, e);
+            return null;
+        }
+    }
+
+    public Long incrementRemaining(String remainingKey) {
+        try {
+            return redisTemplate.opsForValue().increment(remainingKey);
+        } catch (Exception e) {
+            log.error("Failed to increment remains for key: {}", remainingKey, e);
+            return null;
+        }
     }
 }

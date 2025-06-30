@@ -7,7 +7,8 @@ package kr.hhplus.be.server.concert.enums;
  * - READY : 준비(판매 예정)
  * - ON_SELLING : 판매중
  * - EXPIRE : 만료
+ * - SOLD_OUT : 매진
  */
 public enum CommonStatusEnum {
-    STOPPED, CHECKING, READY, ON_SELLING, EXPIRE;
+    STOPPED, CHECKING, READY, ON_SELLING, EXPIRE, SOLD_OUT;
 }

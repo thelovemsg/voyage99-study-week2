@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.common.redis;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisDistributedLockTemplate {
@@ -63,6 +65,7 @@ public class RedisDistributedLockTemplate {
             } finally {
                 if (lockAcquired && lock.isHeldByCurrentThread()) {
                     lock.unlock();
+                    log.debug("Lock released: {}", lockKey); // 디버깅용
                 }
             }
         }
