@@ -43,12 +43,10 @@ public class PurchaseTicketRedisServiceImpl implements PurchaseTicketRedisUseCas
         Long concertScheduleId = request.getConcertScheduleId();
         Long ticketId = request.getTicketId();
 
-        //이중락 -> ticket을 구매하는 경우,
-        String lockKey = RedisKeyUtils.getTicketPurchaseLockKey(ticketId);
         String remainingKey = RedisKeyUtils.getConcertScheduleRemainingKey(concertScheduleId);
 
         return lockTemplate.executeWithLock(
-                lockKey,
+                remainingKey,
                 () -> {
                     Ticket ticket = ticketRepository.findById(ticketId)
                             .orElseThrow(() -> new NotFoundException(MessageCode.TICKET_NOT_FOUND, ticketId));
