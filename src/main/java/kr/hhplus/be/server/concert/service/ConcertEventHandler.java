@@ -17,7 +17,7 @@ public class ConcertEventHandler {
     @EventListener
     @Async
     public void handleConcertSoldOut(ConcertSoldOutEvent event) throws JsonProcessingException {
-        concertScheduleService.markAsSoldOut(event.getConcertScheduleId());
-        rankingService.addToRanking(event.getConcertScheduleId(), event.getConcertInfo(), event.getSoldOutDatetime());
+        concertScheduleService.markAsSoldOut(event.concertScheduleId());
+        rankingService.addToRanking(event.concertScheduleId(), event.concertInfo(), event.soldOutDatetime());
     }
 }

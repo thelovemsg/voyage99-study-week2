@@ -31,7 +31,7 @@ public class ConcertScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(concertScheduleService.createConcertSchedule(request));
     }
 
-    @PostMapping
+    @GetMapping("/ranks")
     public ResponseEntity<List<RankingInfo>> getRankingInfoList() throws JsonProcessingException {
         return ResponseEntity.status(HttpStatus.OK).body(rankingService.getTodayRanking(10));
     }

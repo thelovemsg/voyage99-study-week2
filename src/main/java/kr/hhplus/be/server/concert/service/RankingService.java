@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.redis.RedisCacheTemplate;
 import kr.hhplus.be.server.common.redis.RedisKeyUtils;
+import kr.hhplus.be.server.concert.controller.dto.RankingData;
 import kr.hhplus.be.server.concert.controller.dto.RankingInfo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RankingService {
@@ -21,19 +24,18 @@ public class RankingService {
     private final RedisCacheTemplate cacheTemplate;
     private final ObjectMapper objectMapper;
 
-    public void addToRanking(Long concertScheduleId, String concertTitle, LocalDateTime soldOutTime) throws JsonProcessingException {
+    public void addToRanking(Long concertScheduleId, String concertTitle, LocalDateTime soldOutTime) {
         String rankingKey = RedisKeyUtils.getDailyRankingKey();
 
-        RankingInfo rankingInfo = RankingInfo.builder()
+        RankingData rankingData = RankingData.builder()
                 .concertScheduleId(concertScheduleId)
                 .concertTitle(concertTitle)
                 .soldOutTime(soldOutTime)
                 .build();
 
-        String rankingInfoJson = objectMapper.writeValueAsString(rankingInfo);
         double score = calculateScore(soldOutTime);
 
-        cacheTemplate.addToSortedSetForRanking(rankingKey, rankingInfoJson, score);
+        cacheTemplate.addToSortedSetForRanking(rankingKey, rankingData, score);
     }
 
     /**
@@ -50,8 +52,16 @@ public class RankingService {
         int rank = 1;
 
         for (String json : rankingJsons) {
-            RankingInfo info = objectMapper.readValue(json, RankingInfo.class);
-            info.setRank(rank++); // 등수 설정
+            log.info("json : {}", json);
+            RankingData data = objectMapper.readValue(json, RankingData.class);  // ← RankingData로 읽기
+
+            RankingInfo info = RankingInfo.builder()
+                    .concertScheduleId(data.getConcertScheduleId())
+                    .concertTitle(data.getConcertTitle())
+                    .soldOutTime(data.getSoldOutTime())
+                    .rank(rank++)
+                    .build();
+
             rankings.add(info);
         }
 
