@@ -21,7 +21,7 @@ public class RedisKeyUtils {
     private static final String SCHEDULE_STR = SCHEDULE.getPrefix();
     private static final String RANK_STR = RANK.getPrefix();        // 수정
     private static final String DAILY_STR = DAILY.getPrefix();      // 추가
-
+    private static final String QUEUE_STR = QUEUE.getPrefix();      // 추가
 
     // 티켓 잠금 키 생성
     public static String getTicketReverseLockKey(Long ticketId) {
@@ -61,4 +61,9 @@ public class RedisKeyUtils {
     public static String getDailyRankingKey(LocalDate date) {
         return String.join(COLON_STR, DAILY_STR, RANK_STR, date.toString());
     }
+
+    public static String getQueueWaitingKey() {
+        return String.join(COLON_STR, QUEUE_STR);
+    }
+
 }

@@ -28,6 +28,7 @@ public class QueueCreateCommandDto {
         private Long queueId;
         private Long userId;
         private String status;
+        private int position;
         private String message;
         private String token;
         private LocalDateTime createdAt;

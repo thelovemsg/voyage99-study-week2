@@ -151,7 +151,7 @@ public class RedisCacheTemplate {
 
     // ZSet 관련 메서드 추가
     // WANING! : member를 넘겨줘도 알아서 잘 redisTemplate 에서 직렬화해준다.
-    public void addToSortedSetForRanking(String key, Object member, double score) {
+    public void addToSortedSet(String key, Object member, double score) {
         try {
             redisTemplate.opsForZSet().add(key, member, score);
 

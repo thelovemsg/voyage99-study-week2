@@ -78,6 +78,9 @@ public class PurchaseTicketRedisServiceImpl implements PurchaseTicketRedisUseCas
                         if (remaining == 0) {
                             eventPublisher.publishEvent(new ConcertSoldOutEvent(concertScheduleId, ticket.getConcertInfo(), LocalDateTime.now()));
                         }
+
+                        //TODO : 여기에도 티켓 판매시에 대기열 제거 이벤트가 일어나야 하나?`
+
                         return PurchaseTicketCommandDto.Response.builder()
                                 .ticketId(ticketId)
                                 .isSuccess(Boolean.TRUE)

@@ -35,7 +35,7 @@ public class RankingService {
 
         double score = calculateScore(soldOutTime);
 
-        cacheTemplate.addToSortedSetForRanking(rankingKey, rankingData, score);
+        cacheTemplate.addToSortedSet(rankingKey, rankingData, score);
     }
 
     /**
@@ -45,10 +45,11 @@ public class RankingService {
     public List<RankingInfo> getTodayRanking(int limit) throws JsonProcessingException {
         String rankingKey = RedisKeyUtils.getDailyRankingKey();
 
-        // 점수 높은 순으로 조회 (빠른 매진 순)
+        // 점수 높은 순으로 조회 (빠른 매진 순) => Set은 기본적으로 순서를 보장하지 않지만 redis 에서 내부적으로 LinkedHashSet을 사용해서 반환함.
         Set<String> rankingJsons = cacheTemplate.getReverseRangeFromSortedSet(rankingKey, 0, limit - 1);
 
         List<RankingInfo> rankings = new ArrayList<>();
+
         int rank = 1;
 
         for (String json : rankingJsons) {

@@ -17,7 +17,8 @@ public enum RedisPrefixEnum {
     REMAINING("remaining"),
     SCHEDULE("schedule"),
     RANK("rank"),
-    DAILY("daily");
+    DAILY("daily"),
+    QUEUE("queue")
     ;
 
     private final String prefix;
